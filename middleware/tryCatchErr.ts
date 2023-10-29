@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request, RequestHandler } from "express";
 export default function tryCatchErr<
   ReqBody,
-  ResBody = { message: string, data?: any ,token:string},
+  ResBody = { message: string, data?: any ,token?:string},
   Params = never,
   ReqQuery = never
 >(fun: RequestHandler<Params, ResBody, ReqBody, ReqQuery>) {

@@ -4,10 +4,13 @@ import tryCatchErr from "./tryCatchErr";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 const guard = tryCatchErr<never>(async (req, res, next) => {
-  let token = req.cookies?.token;
+  // let token = req.cookies?.token;
+  // if (!token) {
+    // req.cookies.token = req.headers.authorization
+   const token = req.headers.authorization
+  // }
   if (!token) {
-    req.cookies.token = req.headers.authorization
-    token = req.headers.authorization
+    return res.status(401).json({message:"token is required"})
   }
   try {
     const tokenData = jwt.verify(token, process.env.SECRET_KEY!);
