@@ -19,5 +19,10 @@ const placeSchema = new Schema<Place>({
         required: true
     }
 
+},{
+    timestamps:{
+        updatedAt:true,
+        createdAt:true
+    }
 })
 export default model("place", placeSchema)

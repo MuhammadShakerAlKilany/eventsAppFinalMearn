@@ -18,6 +18,17 @@ const userSchema = new Schema<User>({
     phoneNumber: {
         type: String,
         required: true
+    },
+    isAdmin:{
+        type:Boolean,
+    },
+    isVerify:{
+        type:Boolean
+    }
+},{
+    timestamps:{
+        updatedAt:true,
+        createdAt:true
     }
 })
 

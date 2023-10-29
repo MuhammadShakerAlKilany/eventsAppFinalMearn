@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import { Event } from "../interfaces/event.interface";
+import { EventApp } from "../interfaces/event.interface";
 
-const eventSchema = new Schema<Event>({
+const eventSchema = new Schema<EventApp>({
     category: {
         type: String,
         required: true
@@ -20,6 +20,11 @@ const eventSchema = new Schema<Event>({
     subscribers: {
         type: [Schema.ObjectId],
         required: true
+    }
+},{
+    timestamps:{
+        updatedAt:true,
+        createdAt:true
     }
 })
 

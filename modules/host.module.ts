@@ -10,5 +10,10 @@ const hostSchema = new Schema<Host>({
         type: String,
         required: true
     }
+},{
+    timestamps:{
+        updatedAt:true,
+        createdAt:true
+    }
 })
 export default model("host", hostSchema)
