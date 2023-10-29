@@ -10,7 +10,7 @@ mongoose.connect(process.env.DB_URL!).then(() => {
     const port = 3000
     app.use(helmet());
     app.use(monitorTrans)
-    app.get("api/v1", (req, res) => {
+    app.get("/api/v1", (req, res) => {
         res.send("API work")
     })
     app.use(errorHandler)
@@ -18,6 +18,6 @@ mongoose.connect(process.env.DB_URL!).then(() => {
     app.listen(port, () => {
         console.log(`server work in port:${port}`)
     })
-}).catch((err)=>{
+}).catch((err) => {
     console.log(err)
 })
