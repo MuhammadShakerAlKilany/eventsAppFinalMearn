@@ -1,5 +1,5 @@
 import { RegisterUser, User } from "../interfaces/user.interface";
-import userModule from "../modules/user.module";
+import userModule from "../modules/DB/user.module";
 import { UserDaoIntr } from "./interface/userDao";
 import { genSalt, hash } from "bcrypt";
 

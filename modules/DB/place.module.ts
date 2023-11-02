@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { Place } from "../interfaces/place.interface";
+import { Place } from "../../interfaces/place.interface";
 
 const placeSchema = new Schema<Place>({
     address: {

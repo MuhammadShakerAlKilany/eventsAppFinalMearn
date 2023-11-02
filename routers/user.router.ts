@@ -5,7 +5,7 @@ import { login, register } from "../controller/user.controller";
 
  const router = Router()
 
-router.post("register",joiValidatorBody(registerSchema),register)
-router.post("login",joiValidatorBody(loginSchema),login)
+router.post("/register",joiValidatorBody(registerSchema),register)
+router.post("/login",joiValidatorBody(loginSchema),login)
 
 export default router

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { Host } from "../interfaces/host.interface";
+import { Host } from "../../interfaces/host.interface";
 
 const hostSchema = new Schema<Host>({
     admins: {

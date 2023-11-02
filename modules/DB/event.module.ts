@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { EventApp } from "../interfaces/event.interface";
+import { EventApp } from "../../interfaces/event.interface";
 
 const eventSchema = new Schema<EventApp>({
     category: {

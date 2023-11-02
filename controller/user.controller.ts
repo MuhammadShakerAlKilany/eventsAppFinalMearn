@@ -27,5 +27,6 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
     
     }
     
-   }
+}
+return res.status(404).json({message:"email or password is mistake"})
 })
