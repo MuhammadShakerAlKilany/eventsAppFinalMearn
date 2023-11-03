@@ -11,3 +11,7 @@ export const eventSchema = Joi.object<EventApp>({
     
 
 })
+export const subscribeSchema= Joi.object({
+    eventId:Joi.string().required(),
+    userId:Joi.string().required()
+})
