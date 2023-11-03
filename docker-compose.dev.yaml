@@ -1,0 +1,13 @@
+version: '3'
+services:
+  node-app:
+    build: 
+      dockerfile: "dockerfile"
+    ports:
+      - "3000:3000"  
+    restart: always
+    environment:
+      - DB_URL=mongodb+srv://MuhammadAlKilany:Q5Sx5qck6xB3KE9R@cluster0.4utxrt0.mongodb.net/events-app
+      - SECRET_KEY = k887899_$8878EWDhcgti2T87p44hEEOHRwpkjiJ3MEXJxMuRccNHEPW7Rv6S0zF7K9BfyKS+6oMKPm6NPatjOu4zt7ZWIY6xymaHZxn5IIlAmh7zaRq9Y6Xg9E4lOhrcOWZyIIXn53HJtsgUmea5ipAsojAQIzFCUWrsaEpwg0QznCrA68jgNUN0c
+      - ENVIR=dev
+      
