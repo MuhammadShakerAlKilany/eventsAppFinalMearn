@@ -1,32 +1,32 @@
 import jwt from "jsonwebtoken";
-import  UserDao  from "../dao/user.dao";
+import UserDao from "../dao/user.dao";
 import { RegisterUser, loginUser } from "../interfaces/user.interface";
 import tryCatchErr from "../middleware/tryCatchErr";
 import "dotenv/config"
-import {compare} from "bcrypt"
+import { compare } from "bcrypt"
+import sendVerified from "../modules/email/sendVerified";
 const userDao = new UserDao()
 export const register = tryCatchErr<RegisterUser>(async (req, res) => {
     const user = req.body
     const newUser = await userDao.createUser(user)
-    const {_id,name,email,phoneNumber}=newUser
-    
- const token = jwt.sign({_id,name,email,phoneNumber},process.env.SECRET_KEY!,{expiresIn:"1m"})
- res.status(201).json({message:"user created",token})
+    const { _id, name, email, phoneNumber } = newUser
+
+    const token = jwt.sign({ _id, name, email, phoneNumber }, process.env.SECRET_KEY!, { expiresIn: "1m" })
+    await sendVerified(user.email, token)
+    res.status(201).json({ message: "user created" })
 
 })
 export const login = tryCatchErr<loginUser>(async (req, res) => {
-   const email =  req.body.email
-   const user  = await userDao.findUserByEmail(email)
-   if(user){
-    const password = req.body.password
-    const  isCompare = await compare(password,user.password)
-    if(isCompare){
-        const {_id,name,email,phoneNumber}=user
-        const token = jwt.sign({_id,name,email,phoneNumber},process.env.SECRET_KEY!,{expiresIn:"1m"})
-        return res.status(200).json({message:"you log in",token})
-    
+    const email = req.body.email
+    const user = await userDao.findUserByEmail(email)
+    if (user) {
+        const password = req.body.password
+        const isCompare = await compare(password, user.password)
+        if (isCompare) {
+            const { _id, name, email, phoneNumber } = user
+            const token = jwt.sign({ _id, name, email, phoneNumber }, process.env.SECRET_KEY!, { expiresIn: "1m" })
+            return res.status(200).json({ message: "you log in", token })
+        }
     }
-    
-}
-return res.status(404).json({message:"email or password is mistake"})
+    return res.status(404).json({ message: "email or password is wrong" })
 })

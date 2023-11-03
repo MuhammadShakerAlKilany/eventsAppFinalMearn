@@ -1,4 +1,5 @@
 import { ErrorRequestHandler } from "express";
+import multer from "multer";
 type ResErr = {
   message: string | string[];
   error?: any;
@@ -10,6 +11,7 @@ const errorHandler: ErrorRequestHandler<never, ResErr> = (
   next
 ) => {
   if (error) {
+    if(error instanceof multer.MulterError)return res.status(400).json({message:"err multer",error})
     if (error.code == 11000)
       return res.status(400).json({ message: "email is unique", error });
     if (error?.details) {

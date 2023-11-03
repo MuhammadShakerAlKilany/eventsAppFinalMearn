@@ -1,9 +1,9 @@
 import { Request, RequestHandler } from "express";
-import tryCatchErr from "./tryCatchErr";
+import tryCatchErr from "../tryCatchErr";
 
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-const guard = tryCatchErr<never>(async (req, res, next) => {
+const guard = tryCatchErr<any>(async (req, res, next) => {
   // let token = req.cookies?.token;
   // if (!token) {
     // req.cookies.token = req.headers.authorization
@@ -13,8 +13,9 @@ const guard = tryCatchErr<never>(async (req, res, next) => {
     return res.status(401).json({message:"token is required"})
   }
   try {
-    const tokenData = jwt.verify(token, process.env.SECRET_KEY!);
+    const tokenData = jwt.verify(token, process.env.SECRET_KEY!) as Object
     if (!tokenData) return res.status(401).json({ message: "you are logOut" });
+    req.user = {...tokenData}
   } catch (error) {
     console.log(error)
     res

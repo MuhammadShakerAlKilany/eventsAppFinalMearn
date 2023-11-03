@@ -7,5 +7,8 @@ export interface EventApp{
     dateTime:Date,
     description:string,
     subscribers:ObjectId[],
+    admins:ObjectId[],
+    ticketCount:number,
+    posterPath:string
 }
 export type EventCreat=Omit<EventApp,"subscribers"|"_id">

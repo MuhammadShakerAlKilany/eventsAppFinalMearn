@@ -7,7 +7,7 @@ export interface User {
     phoneNumber: string,
     name: string,
     isAdmin:boolean,
-    isVerify:boolean
+    isVerify:boolean,
 }
 export type RegisterUser =  Pick<User,"email"|"name"|"password"|"phoneNumber">;
 export type loginUser =  Pick<User,"email"|"password">
