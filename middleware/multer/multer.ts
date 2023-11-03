@@ -3,7 +3,6 @@ import path from "path"
 export const upload = multer({
     dest: 'uploads/',
     limits: {
-        fields: 5,
         fieldNameSize: 50, // TODO: Check if this size is enough
         fieldSize: 20000, //TODO: Check if this size is enough
         fileSize: 15000000, // 150 KB for a 1080x1080 JPG 90

@@ -15,7 +15,7 @@ const guard = tryCatchErr<any>(async (req, res, next) => {
   try {
     const tokenData = jwt.verify(token, process.env.SECRET_KEY!) as Object
     if (!tokenData) return res.status(401).json({ message: "you are logOut" });
-    req.user = {...tokenData}
+    req["user"] = {...tokenData}
   } catch (error) {
     console.log(error)
     res

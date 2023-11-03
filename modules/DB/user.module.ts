@@ -19,16 +19,32 @@ const userSchema = new Schema<User>({
         type: String,
         required: true
     },
-    isAdmin:{
-        type:Boolean,
+    isAdmin: {
+        type: Boolean,
     },
-    isVerify:{
-        type:Boolean
+    isVerify: {
+        type: Boolean
+    },
+    isBan: {
+        type: Boolean,
+
+    },
+    location: {
+        type: String,
+        required: true
+    },
+    userName: {
+        type: String,
+        required: true
+    },
+    proPicPath: {
+        type: String,
+        required: true
     }
-},{
-    timestamps:{
-        updatedAt:true,
-        createdAt:true
+}, {
+    timestamps: {
+        updatedAt: true,
+        createdAt: true
     }
 })
 
