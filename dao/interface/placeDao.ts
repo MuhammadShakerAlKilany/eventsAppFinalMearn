@@ -7,5 +7,5 @@ export interface PlaceDaoIntr {
     createPlace(place: Place): Promise<Place| null> ,
     addAdmin(placeId: ObjectId, userId: ObjectId): Promise<Place | null>,
     removAdmin(placeId: ObjectId, userId: ObjectId): Promise<Place | null>,
-    edet(placeId: ObjectId, place: Place): Promise<Place | null>,
+    edit(placeId: ObjectId, place: Place): Promise<Place | null>,
 }

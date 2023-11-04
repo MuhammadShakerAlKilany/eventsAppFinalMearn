@@ -5,7 +5,7 @@ import { UserDaoIntr } from "./interface/userDao";
 import { genSalt, hash } from "bcrypt";
 
 export default class UserDao implements UserDaoIntr {
-   async findById(_id: Schema.Types.ObjectId): Promise<User | null> {
+    async findById(_id: Schema.Types.ObjectId): Promise<User | null> {
         return await userModule.findById(_id);
     }
     async getAllUser(): Promise<User[]> {
@@ -19,20 +19,20 @@ export default class UserDao implements UserDaoIntr {
     }
     async banUser(_id: Schema.Types.ObjectId): Promise<User | null> {
         const user = await userModule.findById(_id);
-        if(!user)return null
+        if (!user) return null
         user.isBan = !user.isBan
         return await user.save();
     }
     async varifyUser(_id: Schema.Types.ObjectId): Promise<User | null> {
         return await userModule.findByIdAndUpdate(_id, { $set: { isVerify: true } }, { new: true });
     }
-    async adminUser(_id: Schema.Types.ObjectId): Promise<User | null> {
-        const user = await userModule.findById(_id);
-        if(!user)return null
-        user.isAdmin = !user.isAdmin
+    // async adminUser(_id: Schema.Types.ObjectId): Promise<User | null> {
+    //     const user = await userModule.findById(_id);
+    //     if(!user)return null
+    //     user.isAdmin = !user.isAdmin
 
-         return await user.save()
-    }
+    //      return await user.save()
+    // }
     async createUser(user: RegisterUser): Promise<User> {
         const password = user.password
         const salt = await genSalt(10)

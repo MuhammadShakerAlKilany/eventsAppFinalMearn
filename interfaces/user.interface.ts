@@ -6,7 +6,6 @@ export interface User {
     password: string,
     phoneNumber?: string,
     name: string,
-    isAdmin:boolean,
     isVerify:boolean,
     userName:string,
     location?:string,

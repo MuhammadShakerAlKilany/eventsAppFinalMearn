@@ -13,7 +13,7 @@ export default class HostDao implements HostDaoIntr {
     async removAdmin(hostId: ObjectId, userId: Schema.Types.ObjectId): Promise<Host | null> {
         return await hostModule.findByIdAndUpdate(hostId,{$pull:{admins:userId}});
     }
-    async edet(hostId: Schema.Types.ObjectId, place: Host): Promise<Host | null> {
+    async edit(hostId: Schema.Types.ObjectId, place: Host): Promise<Host | null> {
         return await hostModule.findByIdAndUpdate(hostId,place);
     }
 

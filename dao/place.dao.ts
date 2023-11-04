@@ -13,7 +13,7 @@ export default class PlaceDao implements PlaceDaoIntr {
     async removAdmin(placeId: Schema.Types.ObjectId, userId: Schema.Types.ObjectId): Promise<Place | null> {
         return await placeModule.findByIdAndUpdate(placeId,{$pull:{admins:userId}});
     }
-    async edet(placeId: Schema.Types.ObjectId, place: Place): Promise<Place | null> {
+    async edit(placeId: Schema.Types.ObjectId, place: Place): Promise<Place | null> {
         return await placeModule.findByIdAndUpdate(placeId,place);;
     }
 
