@@ -35,9 +35,9 @@ export const findEvent = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
  if(!event)return res.json({message:"not find events",data:{_id}})
  return res.json({message:"find events",data:event})
 })
-export const subscribe = tryCatchErr<never,{eventId:ObjectId,userId:ObjectId}>(async (req,res)=>{
-   const eventId = req.params.eventId;
-   const userId = req.params.userId;
+export const subscribe = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
+   const eventId = req.params._id;
+   const userId = req["user"]._id;
  const user =  await userDao.findById(userId)
  if(!user)return res.status(404).json({message:"not found user",data:{userId}})
  const event =  await eventDao.eventSubscribe(eventId,userId)
