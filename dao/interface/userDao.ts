@@ -9,6 +9,6 @@ export interface UserDaoIntr {
     getAllUserIsBan(): Promise<User[]>,
     banUser(_id: ObjectId): Promise<User | null>,
     varifyUser(_id: ObjectId): Promise<User | null>,
-    adminUser(_id: ObjectId): Promise<User | null>,
+    // adminUser(_id: ObjectId): Promise<User | null>,
     findById(_id: ObjectId): Promise<User | null>,
 }

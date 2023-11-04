@@ -7,6 +7,4 @@ export interface EventDaoIntr{
     getAllEvent():Promise<EventApp[]>,
     eventSubscribe(eventId:ObjectId,userId:ObjectId):Promise<EventApp|null>,
     findEventWithUser(id:ObjectId):Promise<EventApp|null>,
-    
-    
 }

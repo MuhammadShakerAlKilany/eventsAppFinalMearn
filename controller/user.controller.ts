@@ -25,10 +25,11 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
         if(!user.isVerify)return res.status(403).json({message:"varify your email"})
         const password = req.body.password
         const isCompare = await compare(password, user.password)
+        console.log(user.password)
         if (isCompare) {
-            const { _id, name, email, phoneNumber,isAdmin ,isBan,isVerify } = user
-            const token = jwt.sign({ _id, name, email, phoneNumber,isAdmin ,isBan,isVerify}, process.env.SECRET_KEY!, { expiresIn: "30 days" })
-            return res.status(200).json({ message: "you log in", token })
+            const { _id, name, email, phoneNumber ,isBan,isVerify } = user
+            const token = jwt.sign({ _id, name, email, phoneNumber ,isBan,isVerify}, process.env.SECRET_KEY!, { expiresIn: "30 days" })
+            return res.status(200).json({ message: "you log in", token,data:{_id, name, email, phoneNumber } })
         }
     }
     return res.status(404).json({ message: "email or password is wrong" })
@@ -50,13 +51,12 @@ export const banUser = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
   return res.json({message:`user ban:${user.isBan}`})
 })
 
-export const adminUser = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
-    console.log("adminUser")
-    const id =  req.params._id
-  const user =  await userDao.adminUser(id)
-  if(!user)return res.status(404).json({message:"user not found"})
-  return res.json({message:`user ban:${user.isAdmin}`})
-})
+// export const adminUser = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
+//     const id =  req.params._id
+//   const user =  await userDao.adminUser(id)
+//   if(!user)return res.status(404).json({message:"user not found"})
+//   return res.json({message:`user admin:${user.isAdmin}`})
+// })
 export const varifyUser = tryCatchErr<never,{token:string}>(async (req,res)=>{
     const token =  req.params.token
     console.log(token)

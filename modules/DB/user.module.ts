@@ -19,9 +19,9 @@ const userSchema = new Schema<User>({
         type: String,
         required: true
     },
-    isAdmin: {
-        type: Boolean,
-    },
+    // isAdmin: {
+    //     type: Boolean,
+    // },
     isVerify: {
         type: Boolean
     },
