@@ -51,11 +51,10 @@ export const banUser = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
 })
 
 export const adminUser = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
-    console.log("adminUser")
     const id =  req.params._id
   const user =  await userDao.adminUser(id)
   if(!user)return res.status(404).json({message:"user not found"})
-  return res.json({message:`user ban:${user.isAdmin}`})
+  return res.json({message:`user admin:${user.isAdmin}`})
 })
 export const varifyUser = tryCatchErr<never,{token:string}>(async (req,res)=>{
     const token =  req.params.token
