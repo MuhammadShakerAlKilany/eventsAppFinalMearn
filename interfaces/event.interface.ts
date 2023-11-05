@@ -8,6 +8,7 @@ export interface EventApp{
     description:string,
     subscribers:ObjectId[],
     host:ObjectId,
+    place:ObjectId,
     ticketCount:number,
     posterPath:string
 }

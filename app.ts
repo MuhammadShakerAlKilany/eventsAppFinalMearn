@@ -4,10 +4,10 @@ import { monitorTrans } from "./middleware/monitorTrans"
 import errorHandler from "./middleware/errorHandler"
 import helmet from "helmet";
 import "dotenv/config"
-import apiRouter from "./routers/api.router"
+import apiRouter from "./routers/api.routes"
 import { Server } from 'socket.io';
-import {  connection } from "./socket/connection";
-import {guardSocket } from "./middleware/guardSocket";
+import { connection } from "./socket/connection";
+import { guardSocket } from "./middleware/guardSocket";
 import cors from "cors"
 mongoose.connect(process.env.DB_URL!).then(() => {
     console.log("connected with DB")
@@ -18,11 +18,7 @@ mongoose.connect(process.env.DB_URL!).then(() => {
     app.use(monitorTrans)
     app.use(express.json())
     app.use("/api/v1", apiRouter)
-    app.use("/socet", () => {
-
-    })
     app.use(errorHandler)
-
     app.all("*", (req, res) => {
         res.json({ message: "Not found" })
     })

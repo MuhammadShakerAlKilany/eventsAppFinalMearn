@@ -5,12 +5,21 @@ import tryCatchErr from "../middleware/tryCatchErr";
 import { EventEmitter } from "events"
 import { scheduleJob } from "node-schedule"
 import UserDao from "../dao/user.dao";
+import HostDao from "../dao/host.dao";
+import PlaceDao from "../dao/place.dao";
 export const eventEmitter = new EventEmitter()
 const eventDao = new EventDao()
 const userDao = new UserDao()
+const hostDao = new HostDao()
+const placeDao = new PlaceDao()
 export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
     const event = req.body
     event.posterPath = req.file?.path!
+    console.log(req.file)
+    const host = await hostDao.findHost(event?.host);
+    const place = await placeDao.findById(event?.place);
+    if(!host)return res.status(404).json({message:"not found host"})
+    if(!place)return res.status(404).json({message:"not found place"})
     const newEvent = await eventDao.createEvent(event)
     const date = new Date(newEvent.dateTime)
     date.setHours(date.getHours() - 1)
@@ -24,24 +33,42 @@ export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
     })
     res.status(201).json({ message: "event created", data: newEvent })
 })
-
-export const allEvent = tryCatchErr(async (req,res)=>{
- const events =  await eventDao.getAllEvent()
- return res.json({message:"all events",data:events})
+export const allEvent = tryCatchErr(async (req, res) => {
+    const events = await eventDao.getAllEvent()
+    return res.json({ message: "all events", data: events })
 })
-export const findEvent = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
+export const allEventUser = tryCatchErr(async (req, res) => {
+    const events = await eventDao.getAllEvent()
+    return res.json({ message: "all events", data: events })
+})
+export const findEvent = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
     const _id = req.params._id
- const event =  await eventDao.findEvent(_id)
- if(!event)return res.json({message:"not find events",data:{_id}})
- return res.json({message:"find events",data:event})
+    const event = await eventDao.findEvent(_id)
+    if (!event) return res.json({ message: "not find events", data: { _id } })
+    return res.json({ message: "find events", data: event })
 })
-export const subscribe = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
-   const eventId = req.params._id;
-   const userId = req["user"]._id;
- const user =  await userDao.findById(userId)
- if(!user)return res.status(404).json({message:"not found user",data:{userId}})
- const event =  await eventDao.eventSubscribe(eventId,userId)
-if(!event)return res.status(404).json({message:"not found event",data:{eventId}})
-return res.json({message:"subscribe success"})
+export const subscribe = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
+    const eventId = req.params._id;
+    const userId = req["user"]._id;
+    const user = await userDao.findById(userId)
+    if (!user) return res.status(404).json({ message: "not found user", data: { userId } })
+    const event = await eventDao.eventSubscribe(eventId, userId)
+    if (!event) return res.status(404).json({ message: "not found event", data: { eventId } })
+    return res.json({ message: "subscribe success" })
 
+})
+export const unsubscribe = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
+    const eventId = req.params._id;
+    const userId = req["user"]._id;
+    const user = await userDao.findById(userId)
+    if (!user) return res.status(404).json({ message: "not found user", data: { userId } })
+    const event = await eventDao.eventUnSubscribe(eventId, userId)
+    if (!event) return res.status(404).json({ message: "not found event", data: { eventId } })
+    return res.json({ message: "unSubscribe success" })
+
+})
+export const userEventAmin = tryCatchErr(async (req, res) => {
+    const userId = req["user"]._id;
+    const events = await eventDao.userEventAmin(userId)
+    return res.json({ message: "all events", data: events })
 })
