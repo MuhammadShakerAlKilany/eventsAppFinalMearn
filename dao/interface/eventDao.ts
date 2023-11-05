@@ -10,5 +10,6 @@ export interface EventDaoIntr{
     eventUnSubscribe(eventId: ObjectId, userId: ObjectId): Promise<EventApp | null>
     userEvent(userId:ObjectId):Promise<EventApp[]>,
     userEventAmin(userId:ObjectId):Promise<EventApp[]>,
-    getAllEventByHostId(hostId:ObjectId):Promise<EventApp[]>
+    getAllEventByHostId(hostId:ObjectId):Promise<EventApp[]>,
+    edit(eventId:ObjectId,event:EventApp): Promise<EventApp | null>
 }

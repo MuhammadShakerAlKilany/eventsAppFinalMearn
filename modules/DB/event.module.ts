@@ -39,7 +39,7 @@ const eventSchema = new Schema<EventApp>({
     place:{
         type: Schema.ObjectId,
         required: true,
-        ref:"place"
+        ref:"host"
     }
 }, {
     timestamps: {

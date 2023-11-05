@@ -4,15 +4,18 @@ import eventModule from "../modules/DB/event.module";
 import { EventDaoIntr } from "./interface/eventDao";
 import HostDao from "./host.dao";
 export default class EventDao implements EventDaoIntr {
+    async edit(eventId: Schema.Types.ObjectId, event: EventApp): Promise<EventApp | null> {
+        return await eventModule.findByIdAndUpdate(eventId, event);
+    }
     async getAllEventByHostId(hostId: Schema.Types.ObjectId): Promise<EventApp[]> {
         return await eventModule.find({ host: hostId });
     }
     async userEventAmin(userId: Schema.Types.ObjectId): Promise<EventApp[]> {
         const events = [] as EventApp[];
         const hosts = await new HostDao().findAdminHosts(userId)
-        hosts.forEach(async(event) => {
-        const eventsFonund = await  this.getAllEventByHostId(event._id)
-        events.push(...eventsFonund)
+        hosts.forEach(async (host) => {
+            const eventsFonund = await this.getAllEventByHostId(host._id)
+            events.push(...eventsFonund)
         })
         return events;
     }
@@ -20,7 +23,7 @@ export default class EventDao implements EventDaoIntr {
         return await eventModule.find({ subscribers: userId }, { subscribers: false, admins: false });
     }
     async findEventWithUser(_id: Schema.Types.ObjectId): Promise<EventApp | null> {
-        return await eventModule.findById(_id).populate("user");
+        return await eventModule.findById(_id).populate("place").populate("host").populate("subscribers", "-password");
     }
     async getAllEvent(): Promise<EventApp[]> {
         return await eventModule.find({}, { subscribers: false, admins: false });
