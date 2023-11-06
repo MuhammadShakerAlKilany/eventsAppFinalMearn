@@ -33,7 +33,8 @@ const userSchema = new Schema<User>({
     },
     userName: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     proPicPath: {
         type: String,
