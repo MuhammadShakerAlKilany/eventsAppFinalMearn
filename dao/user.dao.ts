@@ -5,6 +5,9 @@ import { UserDaoIntr } from "./interface/userDao";
 import { genSalt, hash } from "bcrypt";
 
 export default class UserDao implements UserDaoIntr {
+    async edit(_id: Schema.Types.ObjectId, user: User): Promise<User | null> {
+        return await userModule.findByIdAndUpdate(_id,user);
+    }
     async findById(_id: Schema.Types.ObjectId): Promise<User | null> {
         return await userModule.findById(_id);
     }

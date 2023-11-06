@@ -17,7 +17,6 @@ const userSchema = new Schema<User>({
     },
     phoneNumber: {
         type: String,
-        required: true
     },
     // isAdmin: {
     //     type: Boolean,
@@ -31,7 +30,6 @@ const userSchema = new Schema<User>({
     },
     location: {
         type: String,
-        required: true
     },
     userName: {
         type: String,

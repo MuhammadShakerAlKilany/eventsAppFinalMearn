@@ -11,4 +11,5 @@ export interface UserDaoIntr {
     varifyUser(_id: ObjectId): Promise<User | null>,
     // adminUser(_id: ObjectId): Promise<User | null>,
     findById(_id: ObjectId): Promise<User | null>,
+    edit(_id:ObjectId,user:User):Promise<User | null>,
 }
