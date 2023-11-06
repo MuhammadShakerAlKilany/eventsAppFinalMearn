@@ -3,6 +3,7 @@ import { EventCreat, EventApp } from "../interfaces/event.interface";
 import eventModule from "../modules/DB/event.module";
 import { EventDaoIntr } from "./interface/eventDao";
 import HostDao from "./host.dao";
+import userModule from "../modules/DB/user.module";
 export default class EventDao implements EventDaoIntr {
     async getEventSubscribeWith(userId: Schema.Types.ObjectId): Promise<EventApp[]> {
         return await eventModule.find({subscribers:userId});
@@ -35,9 +36,11 @@ export default class EventDao implements EventDaoIntr {
         return await eventModule.create(event)
     }
     async eventSubscribe(eventId: ObjectId, userId: ObjectId): Promise<EventApp | null> {
+       await userModule.findByIdAndUpdate(userId,{$addToSet:{subscribeWith:eventId}})
         return await eventModule.findOneAndUpdate({_id:eventId,dateTime:{$gte:(new Date())}}, { $addToSet: { subscribers: userId } })
     }
     async eventUnSubscribe(eventId: ObjectId, userId: ObjectId): Promise<EventApp | null> {
+        await userModule.findByIdAndUpdate(userId,{$pull:{subscribeWith:eventId}})
         return await eventModule.findOneAndUpdate({_id:eventId,dateTime:{$gte:(new Date())}}, { $pull: { subscribers: userId } })
     }
     
