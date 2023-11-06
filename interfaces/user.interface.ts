@@ -11,6 +11,7 @@ export interface User {
     location?:string,
     proPicPath:string,//profile picture path
     isBan:boolean
+    subscribeWith:ObjectId[]
 
 }
 export type RegisterUser =  Pick<User,"email"|"name"|"password"|"phoneNumber">;

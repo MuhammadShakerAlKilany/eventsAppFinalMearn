@@ -37,6 +37,10 @@ const userSchema = new Schema<User>({
     },
     proPicPath: {
         type: String,
+    },
+    subscribeWith:{
+        type:[Schema.ObjectId],
+        ref:"event"
     }
 }, {
     timestamps: {
