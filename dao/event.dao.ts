@@ -4,8 +4,11 @@ import eventModule from "../modules/DB/event.module";
 import { EventDaoIntr } from "./interface/eventDao";
 import HostDao from "./host.dao";
 export default class EventDao implements EventDaoIntr {
+    async getEventSubscribeWith(userId: Schema.Types.ObjectId): Promise<EventApp[]> {
+        return await eventModule.find({subscribers:userId});
+    }
     async edit(eventId: Schema.Types.ObjectId, event: EventApp): Promise<EventApp | null> {
-        return await eventModule.findByIdAndUpdate(eventId, event);
+        return await eventModule.findByIdAndUpdate(eventId, event, { new: true });
     }
     async getAllEventByHostId(hostId: Schema.Types.ObjectId): Promise<EventApp[]> {
         return await eventModule.find({ host: hostId });
@@ -18,9 +21,6 @@ export default class EventDao implements EventDaoIntr {
             events.push(...eventsFonund)
         })
         return events;
-    }
-    async userEvent(userId: Schema.Types.ObjectId): Promise<EventApp[]> {
-        return await eventModule.find({ subscribers: userId }, { subscribers: false, admins: false });
     }
     async findEventWithUser(_id: Schema.Types.ObjectId): Promise<EventApp | null> {
         return await eventModule.findById(_id).populate("place").populate("host").populate("subscribers", "-password");
@@ -35,9 +35,10 @@ export default class EventDao implements EventDaoIntr {
         return await eventModule.create(event)
     }
     async eventSubscribe(eventId: ObjectId, userId: ObjectId): Promise<EventApp | null> {
-        return await eventModule.findByIdAndUpdate(eventId, { $addToSet: { subscribers: userId } })
+        return await eventModule.findOneAndUpdate({_id:eventId,dateTime:{$gte:(new Date())}}, { $addToSet: { subscribers: userId } })
     }
     async eventUnSubscribe(eventId: ObjectId, userId: ObjectId): Promise<EventApp | null> {
-        return await eventModule.findByIdAndUpdate(eventId, { $pull: { subscribers: userId } })
+        return await eventModule.findOneAndUpdate({_id:eventId,dateTime:{$gte:(new Date())}}, { $pull: { subscribers: userId } })
     }
+    
 }

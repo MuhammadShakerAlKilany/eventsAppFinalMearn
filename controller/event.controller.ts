@@ -21,6 +21,7 @@ export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
     if (!host) return res.status(404).json({ message: "not found host" })
     if (!place) return res.status(404).json({ message: "not found place" })
     const newEvent = await eventDao.createEvent(event)
+    eventEmitter.emit("new_event",newEvent)
     const date = new Date(newEvent.dateTime)
     date.setHours(date.getHours() - 1)
     scheduleJob(date, async () => {
@@ -89,6 +90,11 @@ export const edit = tryCatchErr<EventApp,{_id:ObjectId}>(async (req, res) => {
     }
     const event = await eventDao.edit(eventId,eventData)
     return res.json({ message: "even edit", data: event })
+})
+export const getEventSubscribeWith =  tryCatchErr(async (req, res) => {
+    const userId = req["user"]._id;
+    const events = await eventDao.getEventSubscribeWith(userId);
+     return res.json({message:"event subscribe with",data:events})
 })
 async function isAdmin(eventId: ObjectId,userId: ObjectId,res: Response){
     const eventFind = await eventDao.findEvent(eventId)
