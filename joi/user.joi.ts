@@ -8,9 +8,9 @@ export const loginSchema = Joi.object<User>({
 
 export const userSchema = loginSchema.keys({
     name:Joi.string().min(5).max(200).required(),
-    phoneNumber:Joi.string().min(5).max(50).required(),
+    phoneNumber:Joi.string().min(5).max(50),
     userName:Joi.string().min(5).max(50).required(),
-    location:Joi.string().min(5).max(50).required()
+    location:Joi.string().min(5).max(50)
     
 }).required()
 export const registerSchema = userSchema.append()
