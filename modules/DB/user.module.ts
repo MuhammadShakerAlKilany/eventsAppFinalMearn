@@ -39,7 +39,6 @@ const userSchema = new Schema<User>({
     },
     proPicPath: {
         type: String,
-        required: true
     }
 }, {
     timestamps: {
