@@ -7,7 +7,8 @@ export interface EventApp{
     dateTime:Date,
     description:string,
     subscribers:ObjectId[],
-    admins:ObjectId[],
+    host:ObjectId,
+    place:ObjectId,
     ticketCount:number,
     posterPath:string
 }

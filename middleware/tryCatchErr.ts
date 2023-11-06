@@ -1,8 +1,16 @@
 import { NextFunction, Response, Request, RequestHandler } from "express";
+declare namespace Express {
+  export interface Request {
+      user: any;
+  }
+  export interface Response {
+      user: any;
+  }
+}
 export default function tryCatchErr<
   ReqBody,
-  ResBody = { message: string, data?: any ,token?:string},
-  Params = never,
+   Params = never,
+ ResBody = { message: string, data?: any ,token?:string},
   ReqQuery = never
 >(fun: RequestHandler<Params, ResBody, ReqBody, ReqQuery>) {
   const tryCatchFun: RequestHandler<
