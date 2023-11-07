@@ -26,7 +26,12 @@ mongoose.connect(process.env.DB_URL!).then(() => {
         console.log(`server work in port:${port}`)
     })
     //socket.io
-    const io = new Server(server)
+    const io = new Server(server,{
+        cors: {
+            origin: '*',
+            methods: ['GET', 'POST'],
+          }
+    })
     io.engine.use(helmet());
     io.use(guardSocket)
     io.on("connection", connection);
