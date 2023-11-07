@@ -8,6 +8,7 @@ import UserDao from "../dao/user.dao";
 import HostDao from "../dao/host.dao";
 import PlaceDao from "../dao/place.dao";
 import { Response } from "express-serve-static-core";
+import { date } from "joi";
 export const eventEmitter = new EventEmitter()
 const eventDao = new EventDao()
 const userDao = new UserDao()
@@ -21,17 +22,17 @@ export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
     if (!host) return res.status(404).json({ message: "not found host" })
     if (!place) return res.status(404).json({ message: "not found place" })
     const newEvent = await eventDao.createEvent(event)
-    eventEmitter.emit("new_event",newEvent)
+    eventEmitter.emit("new_event", newEvent)
     const date = new Date(newEvent.dateTime)
     date.setHours(date.getHours() - 1)
-    scheduleJob(date, async () => {
-        const event = await eventDao.findEvent(newEvent._id)
-        if (event) {
-            event.subscribers.forEach((userId) => {
-                eventEmitter.emit(`event-${userId}`, event.title)
-            })
-        }
-    })
+    // scheduleJob(date, async () => {
+    //     const event = await eventDao.findEvent(newEvent._id)
+    //     if (event) {
+    //         event.subscribers.forEach((userId) => {
+    //             eventEmitter.emit(`event-${userId}`, event.title)
+    //         })
+    //     }
+    // })
     res.status(201).json({ message: "event created", data: newEvent })
 })
 export const allEvent = tryCatchErr(async (req, res) => {
@@ -51,7 +52,7 @@ export const findEvent = tryCatchErr<never, { _id: ObjectId }>(async (req, res) 
 export const findEventForUser = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
     const _id = req.params._id
     const userId = req["user"]._id;
-    if(!(await isAdmin(_id,userId,res)))return
+    if (!(await isAdmin(_id, userId, res))) return
     const event = await eventDao.findEventWithUser(_id)
     if (!event) return res.json({ message: "not find event", data: { _id } })
     return res.json({ message: "find event", data: event })
@@ -79,27 +80,33 @@ export const userEventAmin = tryCatchErr(async (req, res) => {
     const events = await eventDao.userEventAmin(userId)
     return res.json({ message: "all events", data: events })
 })
-export const edit = tryCatchErr<EventApp,{_id:ObjectId}>(async (req, res) => {
+export const edit = tryCatchErr<EventApp, { _id: ObjectId }>(async (req, res) => {
     const userId = req["user"]._id;
     const eventId = req.params._id;
-    if(!(await isAdmin(eventId,userId,res)))return
+    if (!(await isAdmin(eventId, userId, res))) return
     const eventData = req.body;
-    if(req.file?.path){
+    if (req.file?.path) {
 
         eventData.posterPath = req.file?.path!
     }
-    const event = await eventDao.edit(eventId,eventData)
+    const event = await eventDao.edit(eventId, eventData)
     return res.json({ message: "even edit", data: event })
 })
-export const getEventSubscribeWith =  tryCatchErr(async (req, res) => {
+export const getEventSubscribeWith = tryCatchErr(async (req, res) => {
     const userId = req["user"]._id;
     const events = await eventDao.getEventSubscribeWith(userId);
-     return res.json({message:"event subscribe with",data:events})
+    return res.json({ message: "event subscribe with", data: events })
 })
-async function isAdmin(eventId: ObjectId,userId: ObjectId,res: Response){
+export const deleteEvent = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
+    const _id = req.params._id;
+    const event = await eventDao.delete(_id)
+    if(!event)return res.status(404).json({message:"not found event"});
+    return res.json({ message: "delete event", data: event })
+})
+async function isAdmin(eventId: ObjectId, userId: ObjectId, res: Response) {
     const eventFind = await eventDao.findEvent(eventId)
-    if(!eventFind)return res.status(404).json({message:"not found event"});
-   const isAdmin  = (await hostDao.findHost(eventFind.host))?.admins.includes(userId);
-   if(!isAdmin)return res.status(403).json({message:"you not admin for event"})
-   return true
+    if (!eventFind) return res.status(404).json({ message: "not found event" });
+    const isAdmin = (await hostDao.findHost(eventFind.host))?.admins.includes(userId);
+    if (!isAdmin) return res.status(403).json({ message: "you not admin for event" })
+    return true
 }

@@ -20,3 +20,21 @@ export const idSchema= Joi.object({
 export const tokenSchema= Joi.object({
     token:Joi.string().required()
 })
+export const userUpdateSchema = Joi.object({
+    password:Joi.string().min(8).max(100).pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,100}$/),
+    name:Joi.string().min(5).max(200),
+    phoneNumber:Joi.string().min(5).max(50),
+    userName:Joi.string().min(5).max(50),
+    location:Joi.string().min(5).max(50)
+    
+}).required()
+export const userUpdateWithAdminSchema = Joi.object<User>({
+    password:Joi.string().min(8).max(100).pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,100}$/),
+    name:Joi.string().min(5).max(200),
+    phoneNumber:Joi.string().min(5).max(50),
+    userName:Joi.string().min(5).max(50),
+    location:Joi.string().min(5).max(50),
+    isVerify:Joi.boolean(),
+isBan:Joi.boolean()
+    
+}).required()
