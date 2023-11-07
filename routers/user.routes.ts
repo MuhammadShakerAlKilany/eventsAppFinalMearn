@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { joiValidatorBody, joiValidatorParams } from "../middleware/joiValidator";
-import { idSchema, loginSchema, registerSchema, tokenSchema, userUpdateSchema } from "../joi/user.joi";
+import { idSchema, loginSchema, registerSchema, tokenSchema, userUpdateSchema, userUpdateWithAdminSchema } from "../joi/user.joi";
 import { login, register ,banUser ,varifyUser ,allUser,allUserBan, edite, editeUserWithAdmin, deleteUser, addUser, getUserProPicPath} from "../controller/user.controller";
 import { guardAdmin } from "../middleware/Guard/guardAdmin";
 import { upload } from "../middleware/multer/multer";
@@ -18,6 +18,6 @@ router.post("/add_user",guard,guardAdmin,tryCatchErr(upload.single("proPic")),jo
 router.get("/ProPicPath/:_id",joiValidatorParams(idSchema),getUserProPicPath)
 router.get("/verifie/:token",joiValidatorParams(tokenSchema),varifyUser)
 router.patch("/ban/:_id",guard,guardAdmin,joiValidatorParams(idSchema),banUser)
-router.route("/:_id").all(joiValidatorParams(idSchema),guard,guardAdmin).patch(tryCatchErr(upload.single("proPic")),joiValidatorBody(userUpdateSchema),editeUserWithAdmin).delete(deleteUser)
+router.route("/:_id").all(joiValidatorParams(idSchema),guard,guardAdmin).patch(tryCatchErr(upload.single("proPic")),joiValidatorBody(userUpdateWithAdminSchema),editeUserWithAdmin).delete(deleteUser)
 router.route("/").all(guard).patch(upload.single("proPic"),joiValidatorBody(userUpdateSchema),edite)
 export default router

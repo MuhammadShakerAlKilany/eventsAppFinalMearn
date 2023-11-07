@@ -18,6 +18,7 @@ export const connection = (socket:Socket) => {
     eventEmitter.on("new_event",(event)=>{
         console.log(event)
         socket.emit("new_event",event)
+
     })
     socket.on("send_message",(eventId,message)=>{
         socket.to(eventId).emit("new_message",message)
