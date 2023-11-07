@@ -9,6 +9,7 @@ import HostDao from "../dao/host.dao";
 import PlaceDao from "../dao/place.dao";
 import { Response } from "express-serve-static-core";
 import { date } from "joi";
+import path from "path"
 export const eventEmitter = new EventEmitter()
 const eventDao = new EventDao()
 const userDao = new UserDao()
@@ -102,6 +103,12 @@ export const deleteEvent = tryCatchErr<never, { _id: ObjectId }>(async (req, res
     const event = await eventDao.delete(_id)
     if(!event)return res.status(404).json({message:"not found event"});
     return res.json({ message: "delete event", data: event })
+})
+export const eventPhoto =tryCatchErr<never,{ _id: ObjectId }>(async (req, res) => {
+    const _id = req.params._id
+  const event = await eventDao.findEvent(_id);
+  if(!event)return res.status(404).json({message:"not found event"});
+ return res.sendFile(path.join(__dirname,"..",event.posterPath));
 })
 async function isAdmin(eventId: ObjectId, userId: ObjectId, res: Response) {
     const eventFind = await eventDao.findEvent(eventId)
