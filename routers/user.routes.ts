@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { joiValidatorBody, joiValidatorParams } from "../middleware/joiValidator";
-import { idSchema, loginSchema, registerSchema, tokenSchema } from "../joi/user.joi";
-import { login, register ,banUser ,varifyUser ,allUser,allUserBan} from "../controller/user.controller";
+import { idSchema, loginSchema, registerSchema, tokenSchema, userUpdateSchema } from "../joi/user.joi";
+import { login, register ,banUser ,varifyUser ,allUser,allUserBan, edite, editeUserWithAdmin, deleteUser, addUser} from "../controller/user.controller";
 import { guardAdmin } from "../middleware/Guard/guardAdmin";
 import { upload } from "../middleware/multer/multer";
 import tryCatchErr from "../middleware/tryCatchErr";
@@ -16,6 +16,7 @@ router.patch("/ban/:_id",guard,guardAdmin,joiValidatorParams(idSchema),banUser)
 // router.patch("/admin_user/:_id",guard,guardAdmin,joiValidatorParams(idSchema),adminUser)
 router.get("/all",guard,guardAdmin,allUser)
 router.get("/all_ban",guard,guardAdmin,allUserBan)
-
-
+router.route("/:_id").all(joiValidatorParams(idSchema),guard,guardAdmin).patch(tryCatchErr(upload.single("proPic")),joiValidatorBody(userUpdateSchema),editeUserWithAdmin).delete(deleteUser)
+router.route("/").all(guard).patch(upload.single("proPic"),joiValidatorBody(userUpdateSchema),edite)
+router.post("/add_user",guard,guardAdmin,tryCatchErr(upload.single("proPic")),joiValidatorBody(registerSchema),addUser)
 export default router
