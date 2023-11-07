@@ -6,6 +6,9 @@ import "dotenv/config"
 import { compare } from "bcrypt"
 import sendVerified from "../modules/email/sendVerified";
 import { ObjectId } from "mongoose";
+import userModule from "../modules/DB/user.module";
+import fs from "fs/promises"
+import path from "path"
 const userDao = new UserDao()
 export const register = tryCatchErr<RegisterUser>(async (req, res) => {
     const user = req.body as User
@@ -28,8 +31,9 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
         console.log(user.password)
         if (isCompare) {
             const { _id, name, email, phoneNumber, isBan, isVerify } = user
+            const userData = {...user,password:undefined}
             const token = jwt.sign({ _id, name, email, phoneNumber, isBan, isVerify }, process.env.SECRET_KEY!, { expiresIn: "30 days" })
-            return res.status(200).json({ message: "you log in", token, data: { _id, name, email, phoneNumber } })
+            return res.status(200).json({ message: "you log in", token, data: userData })
         }
     }
     return res.status(404).json({ message: "email or password is wrong" })
@@ -101,4 +105,11 @@ export const addUser = tryCatchErr<User,any>(async (req, res) => {
     user.isVerify= true
     const newUser = await userDao.createUser(user);
     return res.status(201).json({message:"user created",data:newUser})
+})
+export  const getUserProPicPath = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
+    const _id = req.params._id
+   const user = await userModule.findById(_id)
+   if (!user) return res.status(404).json({ message: "user not found" });
+    // const proPicPath = await fs.readFile();
+    return res.sendFile(path.join(__dirname,"..",user.proPicPath))
 })

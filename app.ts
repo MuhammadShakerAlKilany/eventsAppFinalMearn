@@ -28,7 +28,7 @@ mongoose.connect(process.env.DB_URL!).then(() => {
     //socket.io
     const io = new Server(server)
     io.engine.use(helmet());
-    // io.use(guardSocket)
+    io.use(guardSocket)
     io.on("connection", connection);
 
 }).catch((err) => {
