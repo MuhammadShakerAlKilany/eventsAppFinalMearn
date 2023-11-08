@@ -10,10 +10,6 @@ const placeSchema = new Schema<Place>({
         type: [Schema.ObjectId],
         required: true
     },
-    category: {
-        type: String,
-        required: true
-    },
     description: {
         type: String,
         required: true
