@@ -9,6 +9,7 @@ import { ObjectId } from "mongoose";
 import userModule from "../modules/DB/user.module";
 import fs from "fs/promises"
 import path from "path"
+import paypal from'paypal-rest-sdk';
 const userDao = new UserDao()
 export const register = tryCatchErr<RegisterUser>(async (req, res) => {
     const user = req.body as User
@@ -82,7 +83,6 @@ export const edite = tryCatchErr<User>(async (req, res) => {
     return res.json({message:"update user",data:user})
 })
 export const editeUserWithAdmin = tryCatchErr<User,any>(async (req, res) => {
-
     const _id = req.params._id!;
     const userData = req.body;
     if(req.file?.path){
@@ -112,4 +112,84 @@ export  const getUserProPicPath = tryCatchErr<never,{_id:ObjectId}>(async (req,r
    if (!user) return res.status(404).json({ message: "user not found" });
     // const proPicPath = await fs.readFile();
     return res.sendFile(path.join(__dirname,"..",user.proPicPath))
+})
+export const changPlane = tryCatchErr<never,{_id:ObjectId}>((req,res)=>{
+    const _id = req.params._id
+    const token = jwt.sign({ _id }, process.env.SECRET_KEY!, { expiresIn: "1 days" })
+    paypal.configure({
+        'mode': 'sandbox', //sandbox or live
+        'client_id': process.env.PAY_CLIENT_ID!,
+        'client_secret': process.env.PAY_CLIENT_SECRET!
+      });
+      const create_payment_json = {
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": process.env.URL!+"/api/v1"+"/user/vip_plane_success/"+token,
+            "cancel_url": process.env.URL!+"/api/v1"+"/user/vip_plane_clos"
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": "VIP plan",
+                    "sku": "VIP plan",
+                    "price": "10.00",
+                    "currency": "USD",
+                    "quantity": 1
+                }]
+            },
+            "amount": {
+                "currency": "USD",
+                "total": "10.00"
+            },
+            "description": "5host \n 5place \nunlimted event."
+        }]
+    };
+    paypal.payment.create(create_payment_json, function (error, payment) {
+        if (error) {
+            throw error;
+        } else {
+            console.log("Create Payment Response");
+            console.log(payment);
+           const link =payment.links?.[1]?.href
+           if(!link)return res.json({message:"fails"})
+           return res.json({message:"link to paypal",data:{link}})
+        }
+    });
+})
+export const successPlane = tryCatchErr<never,{token:string},{paymentId:string,PayerID:string}>(async (req,res)=>{
+ const token =   req.params.token
+ const paymentId = req.query.paymentId;
+ const PayerID = req.query.PayerID;
+ const tokenData = jwt.verify(token, process.env.SECRET_KEY!) as { _id: ObjectId };
+ await userDao.edit(tokenData._id,{isVIP:true}as User);
+ 
+var execute_payment_json = {
+    "payer_id": PayerID,
+    "transactions": [{
+        "amount": {
+            "currency": "USD",
+            "total": "10.00"
+        }
+    }]
+};
+
+res.setHeader('Content-type','text/html')
+paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+    if (error) {
+        console.log(error.response);
+        
+        return res.end("<h1>invalid client</h1>")
+    } else {
+        console.log("Get Payment Response");
+        // console.log(JSON.stringify(payment));
+        return res.end("<h1>congratulations</h1>")
+    }
+});
+})
+export const closPlane = tryCatchErr((req,res)=>{
+res.setHeader('Content-type','text/html')
+ return res.end("<h1>falid</h1>")
 })

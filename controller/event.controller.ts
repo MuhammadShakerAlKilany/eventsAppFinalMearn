@@ -18,10 +18,16 @@ const placeDao = new PlaceDao()
 export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
     const event = req.body
     event.posterPath = req.file?.path!
+    const userId = req["user"]._id
+    const userFind = await userDao.findById(userId);
+    if(!userFind)return res.status(404).json({message:"you logout"})
+    const eventNum = userFind?.subscribeWith.length
+   if(eventNum>=3 && !userFind.isVIP)return res.json({message:"chang your plan to add more event"})
     const host = await hostDao.findHost(event?.host);
-    const place = await placeDao.findById(event?.place);
     if (!host) return res.status(404).json({ message: "not found host" })
+    const place = await placeDao.findById(event?.place);
     if (!place) return res.status(404).json({ message: "not found place" })
+    
     const newEvent = await eventDao.createEvent(event)
     eventEmitter.emit("new_event", newEvent)
     const date = new Date(newEvent.dateTime)
