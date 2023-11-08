@@ -6,4 +6,5 @@ export interface Place {
     address: string,
     admins: ObjectId[],
     description: string,
+    placPhoto:string
 }
