@@ -118,8 +118,15 @@ export const eventPhoto =tryCatchErr<never,{ _id: ObjectId }>(async (req, res) =
 })
 async function isAdmin(eventId: ObjectId, userId: ObjectId, res: Response) {
     const eventFind = await eventDao.findEvent(eventId)
-    if (!eventFind) return res.status(404).json({ message: "not found event" });
+    if (!eventFind) {
+        res.status(404).json({ message: "not found event" });
+        return false 
+    }
     const isAdmin = (await hostDao.findHost(eventFind.host))?.admins.includes(userId);
-    if (!isAdmin) return res.status(403).json({ message: "you not admin for event" })
+    
+    if (!isAdmin){
+        res.status(403).json({ message: "you not admin for event" });
+        return false
+    } 
     return true
 }

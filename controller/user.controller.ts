@@ -180,7 +180,6 @@ res.setHeader('Content-type','text/html')
 paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
     if (error) {
         console.log(error.response);
-        
         return res.end("<h1>invalid client</h1>")
     } else {
         console.log("Get Payment Response");

@@ -4,19 +4,22 @@ import UserDao from "../dao/user.dao";
 import { Place } from "../interfaces/place.interface";
 import tryCatchErr from "../middleware/tryCatchErr";
 import placeModule from "../modules/DB/place.module";
+import path from "path"
 const placeDao = new PlaceDao()
 export const addPlace = tryCatchErr<Place>(async (req, res) => {
     const adminId = req["user"]._id;
     // req.files?.map((file)=>{
     //     return file
     // })
-    
     const userFind = await new UserDao().findById(adminId);
     if (!userFind) return res.status(404).json({ message: "you logout" });
     const placeNum = await placeModule.find({ admins: adminId }).count()
     if (placeNum >= 1 && !userFind.isVIP) return res.json({ message: "chang your plan to add more place" })
     if (placeNum >= 5 && userFind.isVIP) return res.json({ message: "you cant add more then 5 place" })
     const place = req.body
+    if (req.file) {
+        place.placPhoto = req.file.path
+    }
     place.admins = [adminId]
     const placeCreated = await placeDao.createPlace(place)
     return res.status(201).json({ message: "place created", data: placeCreated })
@@ -60,10 +63,23 @@ export const getUserPlace = tryCatchErr(async (req, res) => {
 })
 export const getAllPlace = tryCatchErr(async (req, res) => {
     const places = await placeModule.find()
-    return res.json({ message: "places", data: places })
+    return res.json({ message: "places", data: places });
 })
 export const getPlaceByID = tryCatchErr<never, { placeId: ObjectId }>(async (req, res) => {
-  const placeId =  req.params.placeId;
-  const place = await placeModule.findById(placeId);
-  return res.json({message:"place",data:place})
+    const placeId = req.params.placeId;
+    const place = await placeModule.findById(placeId);
+    return res.json({ message: "place", data: place });
+})
+export const deletePlace = tryCatchErr<never, { placeId: ObjectId }>(async (req, res) => {
+    const placeId = req.params.placeId;
+    const place = await placeModule.findByIdAndDelete(placeId);
+    if (!place) return res.status(404).json({ message: "not found place" });
+    return res.json({ message: "delete place", data: place });
+})
+export const placePhoto = tryCatchErr<never, { placeId: ObjectId }>(async (req, res) => {
+    const _id = req.params.placeId
+    const place = await placeModule.findById(_id)
+   if (!place) return res.status(404).json({ message: "place not found" });
+    // const proPicPath = await fs.readFile();
+    return res.sendFile(path.join(__dirname,"..",place.placPhoto))
 })
