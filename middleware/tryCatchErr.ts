@@ -10,8 +10,8 @@ declare namespace Express {
 export default function tryCatchErr<
   ReqBody,
    Params = never,
- ResBody = { message: string, data?: any ,token?:string},
-  ReqQuery = never
+   ReqQuery = never,
+   ResBody = { message: string, data?: any ,token?:string},
 >(fun: RequestHandler<Params, ResBody, ReqBody, ReqQuery>) {
   const tryCatchFun: RequestHandler<
     Params,

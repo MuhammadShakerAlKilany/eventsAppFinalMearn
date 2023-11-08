@@ -42,7 +42,8 @@ const userSchema = new Schema<User>({
     subscribeWith:{
         type:[Schema.ObjectId],
         ref:"event"
-    }
+    },
+    isVIP:Boolean
 }, {
     timestamps: {
         updatedAt: true,
