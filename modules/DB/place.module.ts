@@ -13,7 +13,8 @@ const placeSchema = new Schema<Place>({
     description: {
         type: String,
         required: true
-    }
+    },
+    placPhoto:String
 
 },{
     timestamps:{
