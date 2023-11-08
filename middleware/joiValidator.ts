@@ -2,6 +2,7 @@ import tryCatchErr from "./tryCatchErr";
 
 export function joiValidatorBody(schema: any) {
   return tryCatchErr<any, any, any, any>(async (req, res, next) => {
+    console.log(req.files)
     await schema.validateAsync(req.body, { abortEarly: false });
     next();
   });
