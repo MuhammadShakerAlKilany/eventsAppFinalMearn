@@ -17,5 +17,6 @@ router.get("/user_data/:_id",joiValidatorParams(idSchema),findEventForUser)
 router.post("/edit/:_id",joiValidatorParams(idSchema),joiValidatorBody(eventEditSchema),tryCatchErr(upload.single("poster")),edit)
 router.patch("/subscribe/:_id",joiValidatorParams(idSchema),subscribe)
 router.patch("/unsubscribe/:_id",joiValidatorParams(idSchema),unsubscribe)
-router.route("/:_id").all(guardAdmin,joiValidatorParams(idSchema)).get(findEvent).delete(deleteEvent)
+router.route("/:_id").delete(guardAdmin,joiValidatorParams(idSchema),deleteEvent)
+router.route("/:_id").get(joiValidatorParams(idSchema),findEvent)
 export default router
