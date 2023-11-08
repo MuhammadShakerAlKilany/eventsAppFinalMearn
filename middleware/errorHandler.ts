@@ -13,7 +13,7 @@ const errorHandler: ErrorRequestHandler<never, ResErr> = (
   if (error) {
     if(error instanceof multer.MulterError)return res.status(400).json({message:"err multer",error})
     if (error.code == 11000)
-      return res.status(400).json({ message: "email is unique", error });
+      return res.status(400).json({ message: "unique err", error });
     if (error?.details) {
       const messageArr: string[] = error.details.map(
         (err: { message: string }) => {

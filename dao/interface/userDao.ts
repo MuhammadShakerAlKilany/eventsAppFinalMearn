@@ -12,4 +12,5 @@ export interface UserDaoIntr {
     // adminUser(_id: ObjectId): Promise<User | null>,
     findById(_id: ObjectId): Promise<User | null>,
     edit(_id:ObjectId,user:User):Promise<User | null>,
+    delete(_id:ObjectId):Promise<User | null>
 }

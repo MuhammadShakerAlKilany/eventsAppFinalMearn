@@ -3,9 +3,17 @@ import { EventCreat, EventApp } from "../interfaces/event.interface";
 import eventModule from "../modules/DB/event.module";
 import { EventDaoIntr } from "./interface/eventDao";
 import HostDao from "./host.dao";
+import userModule from "../modules/DB/user.module";
 export default class EventDao implements EventDaoIntr {
+    async delete(_id: Schema.Types.ObjectId): Promise<EventApp|null> {
+        const event = await eventModule.findByIdAndDelete({ _id });
+        if (event) {
+            await userModule.updateMany({}, { $pull: { subscribeWith: _id } });
+        }
+        return event
+    }
     async getEventSubscribeWith(userId: Schema.Types.ObjectId): Promise<EventApp[]> {
-        return await eventModule.find({subscribers:userId});
+        return await eventModule.find({ subscribers: userId });
     }
     async edit(eventId: Schema.Types.ObjectId, event: EventApp): Promise<EventApp | null> {
         return await eventModule.findByIdAndUpdate(eventId, event, { new: true });
@@ -35,10 +43,12 @@ export default class EventDao implements EventDaoIntr {
         return await eventModule.create(event)
     }
     async eventSubscribe(eventId: ObjectId, userId: ObjectId): Promise<EventApp | null> {
-        return await eventModule.findOneAndUpdate({_id:eventId,dateTime:{$gte:(new Date())}}, { $addToSet: { subscribers: userId } })
+        await userModule.findByIdAndUpdate(userId, { $addToSet: { subscribeWith: eventId } })
+        return await eventModule.findOneAndUpdate({ _id: eventId, dateTime: { $gte: (new Date()) } }, { $addToSet: { subscribers: userId } })
     }
     async eventUnSubscribe(eventId: ObjectId, userId: ObjectId): Promise<EventApp | null> {
-        return await eventModule.findOneAndUpdate({_id:eventId,dateTime:{$gte:(new Date())}}, { $pull: { subscribers: userId } })
+        await userModule.findByIdAndUpdate(userId, { $pull: { subscribeWith: eventId } })
+        return await eventModule.findOneAndUpdate({ _id: eventId, dateTime: { $gte: (new Date()) } }, { $pull: { subscribers: userId } })
     }
-    
+
 }
