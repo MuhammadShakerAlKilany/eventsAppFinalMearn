@@ -21,7 +21,7 @@ export const connection = (socket:Socket) => {
 
     })
     socket.on("send_message",(eventId,message)=>{
-        socket.to(eventId).emit("new_message",message)
+        socket.broadcast.to(eventId).emit("new_message",message)
     })
     socket.on("join_room",async (eventId,errorHandler)=>{
     const event= await eventModule.findById(eventId)
