@@ -12,7 +12,6 @@ router.route("/").post(tryCatchErr(upload.single("poster")),joiValidatorBody(eve
 router.get("/all",allEvent)
 router.get("/all_subscribe",getEventSubscribeWith)
 router.get("/all_for_user",allEventUser)
-router.get("/photo/:_id",joiValidatorParams(idSchema),eventPhoto)
 router.get("/user_data/:_id",joiValidatorParams(idSchema),findEventForUser)
 router.post("/edit/:_id",joiValidatorParams(idSchema),joiValidatorBody(eventEditSchema),tryCatchErr(upload.single("poster")),edit)
 router.patch("/subscribe/:_id",joiValidatorParams(idSchema),subscribe)
