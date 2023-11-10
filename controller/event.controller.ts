@@ -130,3 +130,14 @@ async function isAdmin(eventId: ObjectId, userId: ObjectId, res: Response) {
     } 
     return true
 }
+export const editWithAmin = tryCatchErr<EventApp, { _id: ObjectId }>(
+  async (req, res) => {
+    const eventId = req.params._id;
+    const eventData = req.body;
+    if (req.file?.path) {
+      eventData.posterPath = req.file?.path!;
+    }
+    const event = await eventDao.edit(eventId, eventData);
+    return res.json({ message: "event edited", data: event });
+  }
+);
