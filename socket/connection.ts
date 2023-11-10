@@ -19,7 +19,6 @@ export const connection = (socket: Socket) => {
     socket.on("event", eventSock)
     socket.on("get_events_rooms", async (userId) => {
         try {
-
             const user = await userModule.findById(userId).populate("subscribeWith", "title")
             console.log(user)
             socket.emit("events_rooms", user?.subscribeWith)
@@ -30,10 +29,9 @@ export const connection = (socket: Socket) => {
     eventEmitter.on("new_event", (event) => {
         console.log(event)
         socket.broadcast.emit("new_event", event)
-
     })
     socket.on("send_message", async (eventId, message, selfMessage) => {
-       const userName = (socket as any)["user"].userName
+        const userName = (socket as any)["user"].userName
         console.log("eventId", eventId)
         let meassageStor = await messageModule.findById(eventId)
         if (!meassageStor) {
@@ -42,11 +40,9 @@ export const connection = (socket: Socket) => {
         meassageStor.messageStore.unshift({
             message: message, name: userName,
         })
-
         const meassageStorSave = await meassageStor.save()
         console.log(meassageStorSave.messageStore[0])
-        if(selfMessage){
-
+        if (selfMessage) {
             selfMessage(meassageStorSave.messageStore[0])
         }
         socket.broadcast.to(eventId).emit("new_message", meassageStorSave.messageStore[0])
@@ -60,7 +56,6 @@ export const connection = (socket: Socket) => {
             let meassageStor = await messageModule.findById(eventId)
             if (event) {
                 socket.join(eventId)
-
                 console.log("join room", eventId)
                 getMeassages(meassageStor?.messageStore)
                 // socket.on()
@@ -86,14 +81,10 @@ export const connection = (socket: Socket) => {
             return message._id == messageId
         })
         console.log(messI)
-        if (messI!=undefined && meassageStor) {
+        if (messI != undefined && meassageStor) {
             console.log(meassageStor.messageStore[messI])
             meassageStor.messageStore[messI].message = newMessage
             await meassageStor?.save()
         }
     })
-
-
-
 }
-
