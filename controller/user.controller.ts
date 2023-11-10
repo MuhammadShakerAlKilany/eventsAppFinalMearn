@@ -29,7 +29,7 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
         if (!user.isVerify) return res.status(403).json({ message: "varify your email" })
         const password = req.body.password
         const isCompare = await compare(password, user.password)
-        console.log(user.password)
+        // console.log(user.password)
         if (isCompare) {
             const { _id, name, email, phoneNumber, isBan, isVerify ,location ,proPicPath,subscribeWith,userName} = user
             const userData = {_id, name, email, phoneNumber, isBan, isVerify ,location ,proPicPath,subscribeWith,userName }
