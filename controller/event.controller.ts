@@ -130,7 +130,7 @@ async function isAdmin(eventId: ObjectId, userId: ObjectId, res: Response) {
     } 
     return true
 }
-export const editWithAmin = tryCatchErr<EventApp, { _id: ObjectId }>(
+export const editWithAdmin = tryCatchErr<EventApp, { _id: ObjectId }>(
   async (req, res) => {
     const eventId = req.params._id;
     const eventData = req.body;
@@ -139,5 +139,14 @@ export const editWithAmin = tryCatchErr<EventApp, { _id: ObjectId }>(
     }
     const event = await eventDao.edit(eventId, eventData);
     return res.json({ message: "event edited", data: event });
+  }
+);
+
+export const deleteWithAdmin = tryCatchErr<never, { _id: ObjectId }>(
+  async (req, res) => {
+    const _id = req.params._id;
+    const event = await eventDao.delete(_id);
+    if (!event) return res.status(404).json({ message: "not found event" });
+    return res.json({ message: "delete event", data: event });
   }
 );

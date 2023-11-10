@@ -3,8 +3,9 @@ import {
   allEvent,
   allEventUser,
   deleteEvent,
+  deleteWithAdmin,
   edit,
-  editWithAmin,
+  editWithAdmin,
   eventCreat,
   eventPhoto,
   findEvent,
@@ -42,7 +43,13 @@ router.post(
   joiValidatorParams(idSchema),
   joiValidatorBody(eventEditSchema),
   tryCatchErr(upload.single("poster")),
-  editWithAmin
+  editWithAdmin
+);
+router.delete(
+  "/delete_with_admin/:_id",
+  guardAdmin,
+  joiValidatorParams(idSchema),
+  deleteWithAdmin
 );
 router.get("/user_data/:_id", joiValidatorParams(idSchema), findEventForUser);
 router.post(
