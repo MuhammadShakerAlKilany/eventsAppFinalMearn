@@ -45,7 +45,10 @@ export const connection = (socket: Socket) => {
 
         const meassageStorSave = await meassageStor.save()
         console.log(meassageStorSave.messageStore[0])
-        selfMessage(meassageStorSave.messageStore[0])
+        if(selfMessage){
+
+            selfMessage(meassageStorSave.messageStore[0])
+        }
         socket.broadcast.to(eventId).emit("new_message", meassageStorSave.messageStore[0])
         socket.broadcast.emit("notification_new_message", eventId)
 
