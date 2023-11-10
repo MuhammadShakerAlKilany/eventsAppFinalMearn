@@ -7,7 +7,7 @@ import "dotenv/config"
 import apiRouter from "./routers/api.routes"
 import { Server } from 'socket.io';
 import { connection } from "./socket/connection";
-import { guardSocket } from "./middleware/guardSocket";
+import { guardSocket } from "./middleware/Guard/guardSocket";
 import cors from "cors"
 mongoose.connect(process.env.DB_URL!).then(() => {
     console.log("connected with DB")
