@@ -5,7 +5,8 @@ import Joi from "joi";
 export const placeSchema = Joi.object<Place>({
     address: Joi.string().min(5).max(200).required(),
     category: Joi.string().min(5).max(200),
-    description: Joi.string().min(5).max(2000).required()
+    description: Joi.string().min(5).max(2000).required(),
+    googleMapUrl:Joi.string().min(5).max(2000).required()
 
 })
 export const placeAdminSchema = Joi.object({

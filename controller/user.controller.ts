@@ -31,9 +31,9 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
         const isCompare = await compare(password, user.password)
         console.log(user.password)
         if (isCompare) {
-            const { _id, name, email, phoneNumber, isBan, isVerify } = user
+            
             const userData = {...user,password:undefined}
-            const token = jwt.sign({ _id, name, email, phoneNumber, isBan, isVerify }, process.env.SECRET_KEY!, { expiresIn: "30 days" })
+            const token = jwt.sign(userData, process.env.SECRET_KEY!, { expiresIn: "30 days" })
             return res.status(200).json({ message: "you log in", token, data: userData })
         }
     }
