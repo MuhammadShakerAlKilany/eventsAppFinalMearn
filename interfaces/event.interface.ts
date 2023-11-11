@@ -10,6 +10,7 @@ export interface EventApp{
     host:ObjectId,
     place:ObjectId,
     ticketCount:number,
-    posterPath:string
+    posterPath: string,
+    location: string,
 }
 export type EventCreat=Omit<EventApp,"subscribers"|"_id">
