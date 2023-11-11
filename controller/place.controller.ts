@@ -70,16 +70,23 @@ export const getPlaceByID = tryCatchErr<never, { placeId: ObjectId }>(async (req
     const place = await placeModule.findById(placeId);
     return res.json({ message: "place", data: place });
 })
-export const deletePlace = tryCatchErr<never, { placeId: ObjectId }>(async (req, res) => {
-    const placeId = req.params.placeId;
-    const place = await placeModule.findByIdAndDelete(placeId);
-    if (!place) return res.status(404).json({ message: "not found place" });
-    return res.json({ message: "delete place", data: place });
-})
 export const placePhoto = tryCatchErr<never, { placeId: ObjectId }>(async (req, res) => {
     const _id = req.params.placeId
     const place = await placeModule.findById(_id)
-   if (!place) return res.status(404).json({ message: "place not found" });
+    if (!place) return res.status(404).json({ message: "place not found" });
     // const proPicPath = await fs.readFile();
     return res.sendFile(path.join(__dirname,"..",place.placPhoto))
 })
+export const deletePlace = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
+    const placeId = req.params._id;
+    const place = await placeModule.findByIdAndDelete(placeId);
+    if (!place) return res.status(404).json({ message: "not found place" });
+    return res.json({ message: "place deleted", data: place });
+});
+   export const edit = tryCatchErr<Place,{_id:ObjectId}>(async (req, res) => {
+    const placeData =  req.body
+    const _id =  req.params._id
+    const place = await placeModule.findByIdAndUpdate(_id,placeData,{new:true});
+    if (!place) return res.status(404).json({ message: "not found place" });
+    res.json({message:"place updated",data:place})
+   });
