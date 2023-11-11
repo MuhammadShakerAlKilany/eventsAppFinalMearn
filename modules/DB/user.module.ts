@@ -1,54 +1,56 @@
 import { Schema, model } from "mongoose";
 import { User } from "../../interfaces/user.interface";
 
-const userSchema = new Schema<User>({
+const userSchema = new Schema<User>(
+  {
     email: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     phoneNumber: {
-        type: String,
+      type: String,
     },
     // isAdmin: {
     //     type: Boolean,
     // },
     isVerify: {
-        type: Boolean
+      type: Boolean,
     },
     isBan: {
-        type: Boolean,
-
+      type: Boolean,
     },
     location: {
-        type: String,
+      type: String,
     },
     userName: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     proPicPath: {
-        type: String,
+      type: String,
     },
-    subscribeWith:{
-        type:[Schema.ObjectId],
-        ref:"event"
+    subscribeWith: {
+      type: [Schema.ObjectId],
+      ref: "event",
     },
-    isVIP:Boolean
-}, {
+    isVIP: Boolean,
+  },
+  {
     timestamps: {
-        updatedAt: true,
-        createdAt: true
-    }
-})
+      updatedAt: true,
+      createdAt: true,
+    },
+  }
+);
 
-export default model("user", userSchema)
+export default model("user", userSchema);
