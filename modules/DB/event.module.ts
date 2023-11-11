@@ -30,7 +30,6 @@ const eventSchema = new Schema<EventApp>({
     },
     posterPath: {
         type: String,
-        required: true
     },
     ticketCount: {
         type: Number,

@@ -9,6 +9,8 @@ import { Server } from 'socket.io';
 import { connection } from "./socket/connection";
 import { guardSocket } from "./middleware/Guard/guardSocket";
 import cors from "cors"
+import { technicalSupportRoom } from "./socket/technicalSupportRoom";
+import { guardSocketTechnicalSupport } from "./middleware/Guard/guardSocketTechnicalSupport";
 mongoose.connect(process.env.DB_URL!).then(() => {
     console.log("connected with DB")
     const app = express()
@@ -32,9 +34,11 @@ mongoose.connect(process.env.DB_URL!).then(() => {
             methods: ['GET', 'POST'],
           }
     })
-    io.engine.use(helmet());
+    // io.engine.use(helmet());
     io.use(guardSocket)
     io.on("connection", connection);
+    io.of("/technical_support").use(guardSocketTechnicalSupport)
+    io.of("/technical_support").on("connection",technicalSupportRoom)
 
 }).catch((err) => {
     console.log(err)

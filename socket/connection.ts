@@ -7,7 +7,9 @@ import { eventEmitter } from "../controller/event.controller";
 import eventModule from "../modules/DB/event.module";
 import messageModule from "../modules/DB/meassage.module";
 import userModule from "../modules/DB/user.module";
+import { technicalSupportRoom } from "./technicalSupportRoom";
 export const connection = (socket: Socket) => {
+    
     const date = new Date()
     date.setSeconds(date.getSeconds() + 2)
     console.log(scheduleJob(date, async () => {
@@ -87,4 +89,5 @@ export const connection = (socket: Socket) => {
             await meassageStor?.save()
         }
     })
+    
 }
