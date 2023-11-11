@@ -37,6 +37,6 @@ mongoose.connect(process.env.DB_URL!).then(() => {
     io.on("connection", connection);
 
 }).catch((err) => {
-    console.log(err)
+    console.log("connected db error",err)
 })
 
