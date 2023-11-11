@@ -47,6 +47,7 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
         proPicPath,
         subscribeWith,
         userName,
+        isVIP
       } = user;
       const userData = {
         _id,
@@ -59,6 +60,7 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
         proPicPath,
         subscribeWith,
         userName,
+        isVIP
       };
       console.log(JSON.stringify(userData));
       const token = jwt.sign(userData, process.env.SECRET_KEY!, {

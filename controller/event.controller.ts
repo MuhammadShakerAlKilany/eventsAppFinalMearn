@@ -10,7 +10,7 @@ import PlaceDao from "../dao/place.dao";
 import { Response } from "express-serve-static-core";
 import { date } from "joi";
 import path from "path"
-export const eventEmitter = new EventEmitter()
+export const newEventNoti = new EventEmitter()
 const eventDao = new EventDao()
 const userDao = new UserDao()
 const hostDao = new HostDao()
@@ -33,7 +33,7 @@ export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
 
     
     const newEvent = await eventDao.createEvent(event)
-    eventEmitter.emit("new_event", newEvent)
+    newEventNoti.emit("new_event", newEvent)
     const date = new Date(newEvent.dateTime)
     date.setHours(date.getHours() - 1)
     // scheduleJob(date, async () => {

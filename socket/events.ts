@@ -1,8 +1,8 @@
-import { eventEmitter } from "../controller/event.controller"
+import { newEventNoti } from "../controller/event.controller"
 
 export const eventSock =(id:string) => {
     console.log(id)
-    eventEmitter.on(`event-${id}`,(title)=>{
+    newEventNoti.on(`event-${id}`,(title)=>{
         
     })
 }
