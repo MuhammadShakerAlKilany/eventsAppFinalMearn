@@ -8,7 +8,8 @@ export const eventSchema = Joi.object<EventApp>({
     description:Joi.string().min(5).max(200).required(),
     host:Joi.string().length(24).required(),
     ticketCount:Joi.number().required(),
-    place:Joi.string().length(24).required()
+    place: Joi.string().length(24),
+    location:Joi.string().max(2000),
     
 
 }).required()
@@ -18,7 +19,8 @@ export const eventEditSchema = Joi.object<EventApp>({
     title: Joi.string().min(5).max(200),
     description:Joi.string().min(5).max(200),
     ticketCount:Joi.number(),
-    place:Joi.string().length(24)
+    place: Joi.string().length(24),
+    location:Joi.string().max(2000),
     
 
 }).required()
