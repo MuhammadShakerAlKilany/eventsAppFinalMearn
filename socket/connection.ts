@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { test } from "./test"
 import { scheduleJob } from "node-schedule";
 import { eventSock } from "./events";
-import { eventEmitter } from "../controller/event.controller";
+import { newEventNoti as newEventNoti } from "../controller/event.controller";
 import eventModule from "../modules/DB/event.module";
 import messageModule from "../modules/DB/meassage.module";
 import userModule from "../modules/DB/user.module";
@@ -28,7 +28,7 @@ export const connection = (socket: Socket) => {
             console.log(error)
         }
     })
-    eventEmitter.on("new_event", (event) => {
+    newEventNoti.on("new_event", (event) => {
         console.log("new_event")
         socket.broadcast.emit("new_event", event)
     })

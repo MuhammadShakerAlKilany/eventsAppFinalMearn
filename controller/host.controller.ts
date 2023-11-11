@@ -119,3 +119,21 @@ export const getUserHost = tryCatchErr(async (req, res) => {
   const hosts = await hostModule.find({ admins: adminId });
   return res.json({ message: "hosts", data: hosts });
 });
+export const getAll = tryCatchErr(async (req, res) => {
+ const hosts = await hostModule.find()
+ res.json({message:"hosts",data:hosts})
+});
+export const deleteHost = tryCatchErr<never,{_id:ObjectId}>(async (req, res) => {
+ const _id = req.params._id
+  const host = await hostModule.findByIdAndDelete(_id)
+ res.json({message:"host deleted",data:host})
+});
+export const edit = tryCatchErr<Host,{_id:ObjectId}>(async (req, res) => {
+ const hostData =  req.body
+ const _id =  req.params._id
+ const host = await hostModule.findByIdAndUpdate(_id,hostData,{new:true});
+ res.json({message:"hosts",data:host})
+});
+
+
+
