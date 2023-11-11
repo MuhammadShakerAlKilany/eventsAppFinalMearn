@@ -31,8 +31,12 @@ const eventSchema = new Schema<EventApp>(
       ref: "host",
     },
     posterPath: {
+<<<<<<< HEAD
+        type: String,
+=======
       type: String,
       required: true,
+>>>>>>> 3ddb7f594b22a052722d43654a9cfffd456127fc
     },
     ticketCount: {
       type: Number,

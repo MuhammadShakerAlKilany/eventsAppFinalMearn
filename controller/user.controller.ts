@@ -244,9 +244,8 @@ export const successPlane = tryCatchErr<
       } else {
         console.log("Get Payment Response");
         // console.log(JSON.stringify(payment));
-        return res.end("<h1>congratulations</h1>");
-      }
-    }
+        return  res.status(301).redirect(`${process.env.CLINT_URL}/login`)
+    }}
   );
 });
 export const closPlane = tryCatchErr((req, res) => {
