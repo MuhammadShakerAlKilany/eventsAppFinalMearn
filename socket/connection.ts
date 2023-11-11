@@ -29,7 +29,7 @@ export const connection = (socket: Socket) => {
         }
     })
     eventEmitter.on("new_event", (event) => {
-        console.log(event)
+        console.log("new_event")
         socket.broadcast.emit("new_event", event)
     })
     socket.on("send_message", async (eventId, message, selfMessage) => {

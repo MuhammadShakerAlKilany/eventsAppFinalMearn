@@ -22,7 +22,7 @@ mongoose.connect(process.env.DB_URL!).then(() => {
     app.use("/api/v1", apiRouter)
     app.use(errorHandler)
     app.all("*", (req, res) => {
-        res.json({ message: "Not found" })
+        res.status(404).json({ message: "Not found" })
     })
     const server = app.listen(port, () => {
         console.log(`server work in port:${port}`)
