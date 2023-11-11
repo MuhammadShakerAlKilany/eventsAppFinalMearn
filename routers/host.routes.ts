@@ -16,6 +16,7 @@ import {
 } from "../middleware/joiValidator";
 import { hostAdminSchema, hostSchema } from "../joi/host.joi";
 import { guardAdmin } from "../middleware/Guard/guardAdmin";
+import { idSchema } from "../joi/user.joi";
 const router = Router();
 router.post("/", joiValidatorBody(hostSchema), addHost);
 router.get("/all_user_host", getUserHost);
@@ -31,5 +32,5 @@ router.patch(
   removAdmin
 );
 router.get("/all",guardAdmin,getAll)
-router.route("/:id").all(guardAdmin).delete(deleteHost).patch(edit)
+router.route("/:_id").all(joiValidatorParams(idSchema),guardAdmin).delete(deleteHost).patch(edit)
 export default router;
