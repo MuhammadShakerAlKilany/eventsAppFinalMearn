@@ -41,6 +41,6 @@ mongoose.connect(process.env.DB_URL!).then(() => {
     io.of("/technical_support").on("connection",technicalSupportRoom)
 
 }).catch((err) => {
-    console.log(err)
+    console.log("connected db error",err)
 })
 
