@@ -34,11 +34,33 @@ export const login = tryCatchErr<loginUser>(async (req, res) => {
       return res.status(403).json({ message: "varify your email" });
     const password = req.body.password;
     const isCompare = await compare(password, user.password);
-    console.log(user.password);
+    // console.log(user.password)
     if (isCompare) {
-      // Plz Don't make spread operator directly on data from mongoose use ...data.toObject() please
-      // const userData = {...user,password:undefined}
-      const userData = { ...user.toObject(), password: undefined };
+      const {
+        _id,
+        name,
+        email,
+        phoneNumber,
+        isBan,
+        isVerify,
+        location,
+        proPicPath,
+        subscribeWith,
+        userName,
+      } = user;
+      const userData = {
+        _id,
+        name,
+        email,
+        phoneNumber,
+        isBan,
+        isVerify,
+        location,
+        proPicPath,
+        subscribeWith,
+        userName,
+      };
+      console.log(JSON.stringify(userData));
       const token = jwt.sign(userData, process.env.SECRET_KEY!, {
         expiresIn: "30 days",
       });

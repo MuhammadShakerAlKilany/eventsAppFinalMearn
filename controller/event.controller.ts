@@ -25,8 +25,12 @@ export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
    if(eventNum>=3 && !userFind.isVIP)return res.json({message:"chang your plan to add more event"})
     const host = await hostDao.findHost(event?.host);
     if (!host) return res.status(404).json({ message: "not found host" })
+    
+    if (event.place) {
     const place = await placeDao.findById(event?.place);
     if (!place) return res.status(404).json({ message: "not found place" })
+    }
+
     
     const newEvent = await eventDao.createEvent(event)
     eventEmitter.emit("new_event", newEvent)
@@ -116,6 +120,7 @@ export const eventPhoto =tryCatchErr<never,{ _id: ObjectId }>(async (req, res) =
   if(!event)return res.status(404).json({message:"not found event"});
  return res.sendFile(path.join(__dirname,"..",event.posterPath));
 })
+
 async function isAdmin(eventId: ObjectId, userId: ObjectId, res: Response) {
     const eventFind = await eventDao.findEvent(eventId)
     if (!eventFind) {

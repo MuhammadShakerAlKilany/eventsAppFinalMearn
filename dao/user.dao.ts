@@ -54,7 +54,7 @@ export default class UserDao implements UserDaoIntr {
         return await userModule.create(user)
     }
     async findUserByEmail(email: string): Promise<User | null> {
-        return await userModule.findOne({ email })
+        return await userModule.findOne({ email }).populate("subscribeWith","title")
     }
 
 }

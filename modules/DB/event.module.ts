@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import { EventApp } from "../../interfaces/event.interface";
 import userModule from "./user.module";
+import { string } from "joi";
 
 const eventSchema = new Schema<EventApp>(
   {
@@ -39,8 +40,10 @@ const eventSchema = new Schema<EventApp>(
     },
     place: {
       type: Schema.ObjectId,
-      required: true,
-      ref: "host",
+      ref: "place",
+    },
+    location: {
+      type: String,
     },
   },
   {

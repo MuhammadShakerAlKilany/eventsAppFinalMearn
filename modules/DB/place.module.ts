@@ -17,7 +17,7 @@ const placeSchema = new Schema<Place>({
     placPhoto:String,
     googleMapUrl:{
         type:String,
-        required:true
+        required:true,
     }
 
 },{
