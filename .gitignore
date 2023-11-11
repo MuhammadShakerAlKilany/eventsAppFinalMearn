@@ -1,4 +1,4 @@
 node_modules
 .env
 secret.txt
-uploads
+*.rest
