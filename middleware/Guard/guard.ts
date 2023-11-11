@@ -20,7 +20,7 @@ const guard = tryCatchErr<any>(async (req, res, next) => {
     console.log(error)
     res
       .clearCookie("token")
-      .status(400)
+      .status(401)
       .json({ message: "err in jwt verify you are logOut" });
     return;
   }

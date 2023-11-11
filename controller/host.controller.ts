@@ -5,6 +5,7 @@ import { Host } from "../interfaces/host.interface";
 import tryCatchErr from "../middleware/tryCatchErr";
 import hostModule from "../modules/DB/host.module";
 import eventModule from "../modules/DB/event.module";
+import userModule from "../modules/DB/user.module";
 const hostDao = new HostDao();
 export const addHost = tryCatchErr<Host>(async (req, res) => {
   const userId = req["user"]._id;
@@ -126,12 +127,20 @@ export const getAll = tryCatchErr(async (req, res) => {
 export const deleteHost = tryCatchErr<never,{_id:ObjectId}>(async (req, res) => {
  const _id = req.params._id
   const host = await hostModule.findByIdAndDelete(_id)
+  if (!host) return res.status(404).json({ message: "not found host" });
+  const allEventDelete =  await eventModule.find({host:host.id})
+ await eventModule.deleteMany({host:host.id})
+ allEventDelete.forEach(async (event)=>{
+
+   await userModule.updateMany({},{$pull:{subscribeWith:event._id}})
+ })
  res.json({message:"host deleted",data:host})
 });
 export const edit = tryCatchErr<Host,{_id:ObjectId}>(async (req, res) => {
  const hostData =  req.body
  const _id =  req.params._id
  const host = await hostModule.findByIdAndUpdate(_id,hostData,{new:true});
+ if (!host) return res.status(404).json({ message: "not found host" });
  res.json({message:"hosts",data:host})
 });
 
