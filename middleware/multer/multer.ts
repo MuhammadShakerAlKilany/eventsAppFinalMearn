@@ -1,7 +1,7 @@
 import multer from 'multer';
 import path from "path"
 export const upload = multer({
-    dest: 'uploads/',
+   storage:multer.memoryStorage(),
     limits: {
         fieldNameSize: 50, // TODO: Check if this size is enough
         fieldSize: 20000, //TODO: Check if this size is enough

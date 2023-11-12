@@ -6,6 +6,7 @@ import tryCatchErr from "../middleware/tryCatchErr";
 import hostModule from "../modules/DB/host.module";
 import eventModule from "../modules/DB/event.module";
 import userModule from "../modules/DB/user.module";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 const hostDao = new HostDao();
 export const addHost = tryCatchErr<Host>(async (req, res) => {
   const userId = req["user"]._id;

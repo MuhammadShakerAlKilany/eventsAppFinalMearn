@@ -10,10 +10,20 @@ import userModule from "../modules/DB/user.module";
 import fs from "fs/promises";
 import path from "path";
 import paypal from "paypal-rest-sdk";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { stor } from "../modules/firebasestorage";
 const userDao = new UserDao();
 export const register = tryCatchErr<RegisterUser>(async (req, res) => {
   const user = req.body as User;
-  user.proPicPath = req.file?.path!;
+  if (req.file) {
+    const filename = "" + req.file.size + req.file.originalname + new Date()
+    const storRef = ref(stor, filename)
+    const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+      contentType: req.file.mimetype
+    })
+    const dowURL = await getDownloadURL(snapSot.ref)
+    user.proPicPath = dowURL;
+  }
   const newUser = await userDao.createUser(user);
   const { _id, name, email, phoneNumber } = newUser;
   const token = jwt.sign(
@@ -107,15 +117,21 @@ export const varifyUser = tryCatchErr<never, { token: string }>(
     };
     const user = await userDao.varifyUser(tokenData._id);
     if (!user) return res.status(404).json({ message: "user not found" });
-    return   res.status(301).redirect(`${process.env.CLINT_URL}/login`);
+    return res.status(301).redirect(`${process.env.CLINT_URL}/login`);
   }
 );
 export const edite = tryCatchErr<User>(async (req, res) => {
   console.log("user admin update");
   const _id = req["user"]?._id;
   const userData = req.body;
-  if (req.file?.path) {
-    userData.proPicPath = req.file?.path;
+  if (req.file) {
+    const filename = "" + req.file.size + req.file.originalname + new Date()
+    const storRef = ref(stor, filename)
+    const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+      contentType: req.file.mimetype
+    })
+    const dowURL = await getDownloadURL(snapSot.ref)
+    userData.proPicPath = dowURL;
   }
   if (!_id) return res.status(404).json({ message: "not found user" });
   const user = await userDao.edit(_id, userData);
@@ -125,8 +141,15 @@ export const edite = tryCatchErr<User>(async (req, res) => {
 export const editeUserWithAdmin = tryCatchErr<User, any>(async (req, res) => {
   const _id = req.params._id!;
   const userData = req.body;
-  if (req.file?.path) {
-    userData.proPicPath = req.file?.path;
+  if (req.file) {
+    const filename = "" + req.file.size + req.file.originalname + new Date()
+    const storRef = ref(stor, filename)
+    const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+      contentType: req.file.mimetype
+    })
+    const dowURL = await getDownloadURL(snapSot.ref)
+
+    userData.proPicPath = dowURL;
   }
   if (!_id) return res.status(404).json({ message: "not found user" });
   const user = await userDao.edit(_id, userData);
@@ -143,7 +166,15 @@ export const deleteUser = tryCatchErr<never, { _id: ObjectId }>(
 );
 export const addUser = tryCatchErr<User, any>(async (req, res) => {
   const user = req.body as User;
-  user.proPicPath = req.file?.path!;
+  if (req.file) {
+    const filename = "" + req.file.size + req.file.originalname + new Date()
+    const storRef = ref(stor, filename)
+    const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+      contentType: req.file.mimetype
+    })
+    const dowURL = await getDownloadURL(snapSot.ref)
+    user.proPicPath = dowURL;
+  }
   user.isVerify = true;
   const newUser = await userDao.createUser(user);
   return res.status(201).json({ message: "user created", data: newUser });
@@ -246,8 +277,9 @@ export const successPlane = tryCatchErr<
       } else {
         console.log("Get Payment Response");
         // console.log(JSON.stringify(payment));
-        return  res.status(301).redirect(`${process.env.CLINT_URL}/login`)
-    }}
+        return res.status(301).redirect(`${process.env.CLINT_URL}/login`)
+      }
+    }
   );
 });
 export const closPlane = tryCatchErr((req, res) => {
