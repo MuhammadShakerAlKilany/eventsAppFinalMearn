@@ -1,37 +1,37 @@
 
 import { Socket } from "socket.io";
-import { test } from "./test"
 import { scheduleJob } from "node-schedule";
 import { eventSock } from "./events";
-import { newEventNoti as newEventNoti } from "../controller/event.controller";
+import { newEventNoti } from "../controller/event.controller";
 import eventModule from "../modules/DB/event.module";
 import messageModule from "../modules/DB/meassage.module";
 import userModule from "../modules/DB/user.module";
 import { technicalSupportRoom } from "./technicalSupportRoom";
 export const connection = (socket: Socket) => {
-    
-    const date = new Date()
-    date.setSeconds(date.getSeconds() + 2)
-    console.log(scheduleJob(date, async () => {
-        socket.emit("test")
-        console.log("test")
-    }).name)
-    console.log("connection")
-    socket.on("hi", test)
-    socket.on("event", eventSock)
-    socket.on("get_events_rooms", async (userId) => {
-        try {
-            const user = await userModule.findById(userId).populate("subscribeWith", "title")
+    try {
+        const date = new Date()
+        date.setSeconds(date.getSeconds() + 2)
+        // console.log(scheduleJob(date, async () => {
+            //     socket.emit("test")
+            //     console.log("test")
+            // }).name)
+            console.log("connection")
+            // socket.on("hi", test)
+            socket.on("event", eventSock)
+            socket.on("get_events_rooms", async (userId) => {
+                try {
+                    const user = await userModule.findById(userId).populate("subscribeWith", "title")
             console.log(user)
             socket.emit("events_rooms", user?.subscribeWith)
         } catch (error) {
             console.log(error)
         }
     })
-    newEventNoti.on("new_event", (event) => {
-        console.log("new_event")
+    const newEvent = (event:any) => {
+        // console.log("new_event")
         socket.broadcast.emit("new_event", event)
-    })
+    }
+    newEventNoti.on("new_event", newEvent)
     socket.on("send_message", async (eventId, message, selfMessage) => {
         const userName = (socket as any)["user"].userName
         console.log("eventId", eventId)
@@ -59,7 +59,10 @@ export const connection = (socket: Socket) => {
             if (event) {
                 socket.join(eventId)
                 console.log("join room", eventId)
-                getMeassages(meassageStor?.messageStore)
+                if(getMeassages){
+
+                    getMeassages(meassageStor?.messageStore)
+                }
                 // socket.on()
             }
         } catch (err) {
@@ -89,5 +92,15 @@ export const connection = (socket: Socket) => {
             await meassageStor?.save()
         }
     })
+    socket.on("disconnect",()=>{
+        socket.disconnect(true)
+        newEventNoti.removeListener("new_event",newEvent);
+        console.log("disconnect")
+    })
+} catch (error) {
+     console.log("socket Err",error)   
+}
+
+
     
 }
