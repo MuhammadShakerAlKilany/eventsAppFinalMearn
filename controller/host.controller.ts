@@ -14,7 +14,7 @@ export const addHost = tryCatchErr<Host>(async (req, res) => {
   const host = req.body;
   host.admins = [userId];
   const hostNum = await hostModule.find({ admins: userId }).count();
-  if (hostNum < 0 && !userFind.isVIP)
+  if (hostNum > 0 && !userFind.isVIP)
     return res.json({ message: "chang your plan to add more host" });
   if (hostNum >= 5 && userFind.isVIP)
     return res.json({ message: "you cant add more then 5 host" });
@@ -75,7 +75,7 @@ export const addAdmin = tryCatchErr<
   if (!userFind) return res.status(404).json({ message: "not found user" });
   if (userFind.isBan) return res.status(404).json({ message: "user is Ban" });
   const hostNum = await hostModule.find({ admins: userId }).count();
-  if (hostNum < 0 && !userFind.isVIP)
+  if (hostNum > 0 && !userFind.isVIP)
     return res.json({ message: "chang user plan to add more host" });
   if (hostNum >= 5 && userFind.isVIP)
     return res.json({ message: "user cant add more then 5 host" });
