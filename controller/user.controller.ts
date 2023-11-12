@@ -107,7 +107,7 @@ export const varifyUser = tryCatchErr<never, { token: string }>(
     };
     const user = await userDao.varifyUser(tokenData._id);
     if (!user) return res.status(404).json({ message: "user not found" });
-    return res.json({ message: `user varify` });
+    return   res.status(301).redirect(`${process.env.CLINT_URL}/login`);
   }
 );
 export const edite = tryCatchErr<User>(async (req, res) => {
