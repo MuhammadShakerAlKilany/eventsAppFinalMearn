@@ -10,28 +10,39 @@ import PlaceDao from "../dao/place.dao";
 import { Response } from "express-serve-static-core";
 import { date } from "joi";
 import path from "path"
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { stor } from "../modules/firebasestorage";
 export const newEventNoti = new EventEmitter()
 const eventDao = new EventDao()
 const userDao = new UserDao()
 const hostDao = new HostDao()
 const placeDao = new PlaceDao()
+
+
 export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
     const event = req.body
-    event.posterPath = req.file?.path!
     const userId = req["user"]._id
     const userFind = await userDao.findById(userId);
     if(!userFind)return res.status(404).json({message:"you logout"})
     const eventNum = userFind?.subscribeWith.length
-   if(eventNum>=3 && !userFind.isVIP)return res.json({message:"chang your plan to add more event"})
-    const host = await hostDao.findHost(event?.host);
-    if (!host) return res.status(404).json({ message: "not found host" })
-    
-    if (event.place) {
+if(eventNum>=3 && !userFind.isVIP)return res.status(400).json({message:"chang your plan to add more event"})
+const host = await hostDao.findHost(event?.host);
+if (!host) return res.status(404).json({ message: "not found host" })
+
+if (event.place) {
     const place = await placeDao.findById(event?.place);
     if (!place) return res.status(404).json({ message: "not found place" })
-    }
-
-    
+}
+if(req.file){
+    const filename = ""+req.file.size+req.file.originalname+new Date()
+    const storRef = ref(stor, filename)
+    const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+            contentType: req.file.mimetype
+        })
+     const dowURL = await getDownloadURL(snapSot.ref)
+    event.posterPath = dowURL
+}
     const newEvent = await eventDao.createEvent(event)
     newEventNoti.emit("new_event", newEvent)
     // const date = new Date(newEvent.dateTime)
@@ -97,9 +108,14 @@ export const edit = tryCatchErr<EventApp, { _id: ObjectId }>(async (req, res) =>
     const eventId = req.params._id;
     if (!(await isAdmin(eventId, userId, res))) return
     const eventData = req.body;
-    if (req.file?.path) {
-
-        eventData.posterPath = req.file?.path!
+    if(req.file){
+        const filename = ""+req.file.size+req.file.originalname+new Date()
+        const storRef = ref(stor, filename)
+        const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+                contentType: req.file.mimetype
+            })
+         const dowURL = await getDownloadURL(snapSot.ref)
+         eventData.posterPath = dowURL
     }
     const event = await eventDao.edit(eventId, eventData)
     return res.json({ message: "even edit", data: event })
@@ -140,8 +156,14 @@ export const editWithAdmin = tryCatchErr<EventApp, { _id: ObjectId }>(
   async (req, res) => {
     const eventId = req.params._id;
     const eventData = req.body;
-    if (req.file?.path) {
-      eventData.posterPath = req.file?.path!;
+    if(req.file){
+        const filename = ""+req.file.size+req.file.originalname+new Date()
+        const storRef = ref(stor, filename)
+        const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+                contentType: req.file.mimetype
+            })
+         const dowURL = await getDownloadURL(snapSot.ref)
+         eventData.posterPath = dowURL
     }
     const event = await eventDao.edit(eventId, eventData);
     return res.json({ message: "event edited", data: event });

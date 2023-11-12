@@ -5,6 +5,8 @@ import { Place } from "../interfaces/place.interface";
 import tryCatchErr from "../middleware/tryCatchErr";
 import placeModule from "../modules/DB/place.module";
 import path from "path"
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { stor } from "../modules/firebasestorage";
 const placeDao = new PlaceDao()
 export const addPlace = tryCatchErr<Place>(async (req, res) => {
     const adminId = req["user"]._id;
@@ -17,9 +19,15 @@ export const addPlace = tryCatchErr<Place>(async (req, res) => {
     if (placeNum >= 1 && !userFind.isVIP) return res.json({ message: "chang your plan to add more place" })
     if (placeNum >= 5 && userFind.isVIP) return res.json({ message: "you cant add more then 5 place" })
     const place = req.body
-    if (req.file) {
-        place.placPhoto = req.file.path
-    }
+    if(req.file){
+        const filename = ""+req.file.size+req.file.originalname+new Date()
+        const storRef = ref(stor, filename)
+        const snapSot = await uploadBytesResumable(storRef, req.file.buffer, {
+                contentType: req.file.mimetype
+            })
+         const dowURL = await getDownloadURL(snapSot.ref)
+         place.placPhoto = dowURL
+      }
     place.admins = [adminId]
     const placeCreated = await placeDao.createPlace(place)
     return res.status(201).json({ message: "place created", data: placeCreated })
