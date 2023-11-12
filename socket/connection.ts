@@ -90,6 +90,8 @@ export const connection = (socket: Socket) => {
             console.log(meassageStor.messageStore[messI])
             meassageStor.messageStore[messI].message = newMessage
             await meassageStor?.save()
+            socket.broadcast.to(eventId).emit("new_message",meassageStor.messageStore[messI])
+            socket.broadcast.emit("notification_new_message", eventId)
         }
     })
     socket.on("disconnect",()=>{
