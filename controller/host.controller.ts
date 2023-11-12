@@ -69,17 +69,18 @@ export const addAdmin = tryCatchErr<
   { hostId: ObjectId; userId: ObjectId }
 >(async (req, res) => {
   const hostId = req.params.hostId;
-  const userId = req.params.userId;
+  const { email } = req.body;
   const adminId = req["user"]._id;
-  const userFind = await new UserDao().findById(userId);
+
+  const userFind = await userModule.findOne({ email: email });
   if (!userFind) return res.status(404).json({ message: "not found user" });
   if (userFind.isBan) return res.status(404).json({ message: "user is Ban" });
-  const hostNum = await hostModule.find({ admins: userId }).count();
+  const hostNum = await hostModule.find({ admins: userFind._id }).count();
   if (hostNum > 0 && !userFind.isVIP)
     return res.json({ message: "chang user plan to add more host" });
   if (hostNum >= 5 && userFind.isVIP)
     return res.json({ message: "user cant add more then 5 host" });
-  const host = await hostDao.addAdmin(hostId, userId, adminId);
+  const host = await hostDao.addAdmin(hostId, userFind._id, adminId);
   if (!host)
     return res
       .status(404)
@@ -121,28 +122,26 @@ export const getUserHost = tryCatchErr(async (req, res) => {
   return res.json({ message: "hosts", data: hosts });
 });
 export const getAll = tryCatchErr(async (req, res) => {
- const hosts = await hostModule.find()
- res.json({message:"hosts",data:hosts})
+  const hosts = await hostModule.find();
+  res.json({ message: "hosts", data: hosts });
 });
-export const deleteHost = tryCatchErr<never,{_id:ObjectId}>(async (req, res) => {
- const _id = req.params._id
-  const host = await hostModule.findByIdAndDelete(_id)
+export const deleteHost = tryCatchErr<never, { _id: ObjectId }>(
+  async (req, res) => {
+    const _id = req.params._id;
+    const host = await hostModule.findByIdAndDelete(_id);
+    if (!host) return res.status(404).json({ message: "not found host" });
+    const allEventDelete = await eventModule.find({ host: host.id });
+    await eventModule.deleteMany({ host: host.id });
+    allEventDelete.forEach(async (event) => {
+      await userModule.updateMany({}, { $pull: { subscribeWith: event._id } });
+    });
+    res.json({ message: "host deleted", data: host });
+  }
+);
+export const edit = tryCatchErr<Host, { _id: ObjectId }>(async (req, res) => {
+  const hostData = req.body;
+  const _id = req.params._id;
+  const host = await hostModule.findByIdAndUpdate(_id, hostData, { new: true });
   if (!host) return res.status(404).json({ message: "not found host" });
-  const allEventDelete =  await eventModule.find({host:host.id})
- await eventModule.deleteMany({host:host.id})
- allEventDelete.forEach(async (event)=>{
-
-   await userModule.updateMany({},{$pull:{subscribeWith:event._id}})
- })
- res.json({message:"host deleted",data:host})
+  res.json({ message: "hosts", data: host });
 });
-export const edit = tryCatchErr<Host,{_id:ObjectId}>(async (req, res) => {
- const hostData =  req.body
- const _id =  req.params._id
- const host = await hostModule.findByIdAndUpdate(_id,hostData,{new:true});
- if (!host) return res.status(404).json({ message: "not found host" });
- res.json({message:"hosts",data:host})
-});
-
-
-
