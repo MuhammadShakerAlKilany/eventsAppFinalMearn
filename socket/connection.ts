@@ -86,7 +86,7 @@ export const connection = (socket: Socket) => {
             return message._id == messageId
         })
         console.log(messI)
-        if (messI != undefined && meassageStor) {
+        if (messI != undefined &&  meassageStor?.messageStore[messI]) {
             console.log(meassageStor.messageStore[messI])
             meassageStor.messageStore[messI].message = newMessage
             await meassageStor?.save()
