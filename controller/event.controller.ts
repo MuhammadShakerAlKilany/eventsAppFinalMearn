@@ -70,6 +70,7 @@ export const findEventForUser = tryCatchErr<never, { _id: ObjectId }>(async (req
 })
 export const subscribe = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
     const eventId = req.params._id;
+    console.log(eventId)
     const userId = req["user"]._id;
     const user = await userDao.findById(userId)
     if (!user) return res.status(404).json({ message: "not found user", data: { userId } })
