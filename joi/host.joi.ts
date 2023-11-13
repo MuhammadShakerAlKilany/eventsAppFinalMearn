@@ -7,5 +7,5 @@ export const hostSchema = Joi.object<Host>({
 });
 export const hostAdminSchema = Joi.object({
   hostId: Joi.string().min(5).max(200).required(),
-  userId: Joi.string().min(5).max(200).required(),
+  userId: Joi.string().min(5).max(200),
 });
