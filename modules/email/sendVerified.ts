@@ -13,7 +13,7 @@ export default async function sendVerified(email: string, token: string) {
     const mailOptions = {
       from: process.env.USER_EMAIL!,
       to: email,
-      subject: "Sending Email using Node.js",
+      subject: "Eventazia Verifie Email",
       text: "That was easy!",
       html: `<a href='${process.env.URL}/api/v1/user/verifie/${token}'>Verifie Email</a>`,
     };
