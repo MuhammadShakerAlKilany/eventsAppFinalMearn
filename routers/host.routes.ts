@@ -34,7 +34,7 @@ router.patch(
 router.get("/all", guardAdmin, getAll);
 router
   .route("/:_id")
-  .all(joiValidatorParams(idSchema), guardAdmin)
+  .all(joiValidatorParams(idSchema))
   .delete(deleteHost)
   .patch(edit);
 export default router;

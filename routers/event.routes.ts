@@ -61,8 +61,7 @@ router.post(
 );
 router.patch("/subscribe/:_id", joiValidatorParams(idSchema), subscribe);
 router.patch("/unsubscribe/:_id", joiValidatorParams(idSchema), unsubscribe);
-router
-  .route("/:_id")
-  .delete(guardAdmin, joiValidatorParams(idSchema), deleteEvent);
+router.route("/:_id").delete(joiValidatorParams(idSchema), deleteEvent);
 router.route("/:_id").get(joiValidatorParams(idSchema), findEvent);
+router.route("/:_id").delete(joiValidatorParams(idSchema), deleteEvent);
 export default router;

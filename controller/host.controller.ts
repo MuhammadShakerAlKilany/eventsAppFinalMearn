@@ -7,6 +7,7 @@ import hostModule from "../modules/DB/host.module";
 import eventModule from "../modules/DB/event.module";
 import userModule from "../modules/DB/user.module";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import AdminDao from "../dao/admin.dao";
 const hostDao = new HostDao();
 export const addHost = tryCatchErr<Host>(async (req, res) => {
   const userId = req["user"]._id;
@@ -128,15 +129,20 @@ export const getAll = tryCatchErr(async (req, res) => {
 });
 export const deleteHost = tryCatchErr<never, { _id: ObjectId }>(
   async (req, res) => {
+    const adminId = req["user"]._id;
     const _id = req.params._id;
-    const host = await hostModule.findByIdAndDelete(_id);
+    const host = await hostModule.findById(_id);
+    const admin = await new AdminDao().getAdmin(adminId);
     if (!host) return res.status(404).json({ message: "not found host" });
+    if (!(admin || host.createdBy.toString() === adminId))
+      return res.status(403).json({ message: "You can not delete this host" });
+    await hostModule.findByIdAndDelete(_id);
     const allEventDelete = await eventModule.find({ host: host.id });
     await eventModule.deleteMany({ host: host.id });
     allEventDelete.forEach(async (event) => {
       await userModule.updateMany({}, { $pull: { subscribeWith: event._id } });
     });
-    res.json({ message: "host deleted", data: host });
+    res.status(200).json({ message: "host deleted", data: host });
   }
 );
 export const edit = tryCatchErr<Host, { _id: ObjectId }>(async (req, res) => {

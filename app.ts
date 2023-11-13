@@ -23,6 +23,9 @@ mongoose
     app.use(express.json());
     app.use("/api/v1", apiRouter);
     app.use(errorHandler);
+    app.all("/", (req, res) => {
+      res.status(200).json({ message: "Welcome to the Eventazia API 🥳" });
+    });
     app.all("*", (req, res) => {
       res.status(404).json({ message: "Not found" });
     });

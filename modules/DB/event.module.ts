@@ -31,7 +31,7 @@ const eventSchema = new Schema<EventApp>(
       ref: "host",
     },
     posterPath: {
-        type: String,
+      type: String,
     },
     ticketCount: {
       type: Number,
@@ -43,6 +43,10 @@ const eventSchema = new Schema<EventApp>(
     },
     location: {
       type: String,
+    },
+    createdBy: {
+      type: Schema.ObjectId,
+      ref: "user",
     },
   },
   {
