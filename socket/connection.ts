@@ -37,7 +37,7 @@ export const connection = (socket: Socket) => {
         newEvent(event:any){
             
             console.log("new_event")
-            this.socket.emit("new_event", event)
+            this.socket.broadcast.emit("new_event", event)
             console.log(this.socket)
         }
 
