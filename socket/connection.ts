@@ -28,7 +28,7 @@ export const connection = (socket: Socket) => {
         }
     })
     const newEvent = (event:any) => {
-        // console.log("new_event")
+        console.log("new_event")
         socket.broadcast.emit("new_event", event)
     }
     newEventNoti.on("new_event", newEvent)
@@ -96,7 +96,7 @@ export const connection = (socket: Socket) => {
     })
     socket.on("disconnect",()=>{
         socket.disconnect(true)
-        newEventNoti.removeListener("new_event",newEvent);
+        newEventNoti.removeAllListeners();
         console.log("disconnect")
     })
 } catch (error) {
