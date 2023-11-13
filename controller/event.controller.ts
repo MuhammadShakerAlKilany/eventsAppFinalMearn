@@ -19,6 +19,7 @@ import {
 import { initializeApp } from "firebase/app";
 import { stor } from "../modules/firebasestorage";
 import AdminDao from "../dao/admin.dao";
+import eventModule from "../modules/DB/event.module";
 export const newEventNoti = new EventEmitter();
 const eventDao = new EventDao();
 const userDao = new UserDao();
@@ -30,14 +31,14 @@ export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
   const userId = req["user"]._id;
   const userFind = await userDao.findById(userId);
   if (!userFind) return res.status(404).json({ message: "you logout" });
-  const eventNum = userFind?.subscribeWith.length;
+  const host = await hostDao.findHost(event?.host);
+  if (!host) return res.status(404).json({ message: "not found host" });
+  const eventNum = await eventModule.find({host:event?.host}).count()
   if (eventNum >= 3 && !userFind.isVIP)
     return res
       .status(400)
       .json({ message: "chang your plan to add more event" });
-  const host = await hostDao.findHost(event?.host);
-  if (!host) return res.status(404).json({ message: "not found host" });
-
+  
   if (event.place) {
     const place = await placeDao.findById(event?.place);
     if (!place) return res.status(404).json({ message: "not found place" });
