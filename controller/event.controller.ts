@@ -54,7 +54,7 @@ export const eventCreat = tryCatchErr<EventCreat>(async (req, res) => {
   }
   event.createdBy = userId;
   const newEvent = await eventDao.createEvent(event);
-  newEventNoti.emit("new_event", newEvent);
+  newEventNoti.emit("new_event", newEvent,userId);
   // const date = new Date(newEvent.dateTime)
   // date.setHours(date.getHours() - 1)
   // scheduleJob(date, async () => {
