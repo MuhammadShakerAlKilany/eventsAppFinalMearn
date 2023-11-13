@@ -293,8 +293,14 @@ export const closPlane = tryCatchErr((req, res) => {
   res.setHeader("Content-type", "text/html");
   return res.end("<h1>falid</h1>");
 });
-export const userData = tryCatchErr(async (req,res)=>{
+export const userSelfData = tryCatchErr(async (req,res)=>{
  const userId =  req["user"]._id
+ const user = await userModule.findById(userId)
+  if(!user)return res.status(404).json({message:"not found user"});
+  return res.json({message:"user data",data:{...user.toObject(),password:undefined}})
+})
+export const userData = tryCatchErr<never,{_id:ObjectId}>(async (req,res)=>{
+ const userId =  req.params._id
  const user = await userModule.findById(userId)
   if(!user)return res.status(404).json({message:"not found user"});
   return res.json({message:"user data",data:{...user.toObject(),password:undefined}})
