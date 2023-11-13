@@ -66,7 +66,7 @@ export const getSpecificHost = tryCatchErr<never>(async (req, res) => {
 });
 
 export const addAdmin = tryCatchErr<
-  never,
+  {email:string},
   { hostId: ObjectId; userId: ObjectId }
 >(async (req, res) => {
   const hostId = req.params.hostId;
