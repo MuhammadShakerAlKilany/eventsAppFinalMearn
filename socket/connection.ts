@@ -7,7 +7,7 @@ import eventModule from "../modules/DB/event.module";
 import messageModule from "../modules/DB/meassage.module";
 import userModule from "../modules/DB/user.module";
 import { technicalSupportRoom } from "./technicalSupportRoom";
-const eventNotArr:any[]= []
+
 export const connection = (socket: Socket) => {
     try {
         const date = new Date()
@@ -28,28 +28,21 @@ export const connection = (socket: Socket) => {
             console.log(error)
         }
     })
-    // const newEvent = (event:any) => {
-    //     console.log("new_event")
-    //     socket.broadcast.emit("new_event", event)
-    // }
-    eventNotArr.push({
-        socket:socket,
-        newEvent(event:any){
-            
+    const newEvent = (event:any,id:string) => {
+        if((socket as any)["user"]._id ==id){
             console.log("new_event")
-            this.socket.broadcast.emit("new_event", event)
-            console.log(this.socket)
+            socket.broadcast.emit("new_event", event)
+        }else{
+            console.log("new_event","not sender")
         }
+    }
 
-    })
-    newEventNoti.on("new_event", (event:any)=>{
-        eventNotArr.forEach((newEvent)=>{
-            newEvent.newEvent(event)
-        })
-    })
+    newEventNoti.on("new_event",newEvent)
+    console.log("listenerCount new_event on",newEventNoti.listenerCount("new_event"))
+
     socket.on("send_message", async (eventId, message, selfMessage) => {
         const userName = (socket as any)["user"].userName
-        console.log("eventId", eventId)
+        // console.log("eventId", eventId)
         let meassageStor = await messageModule.findById(eventId)
         if (!meassageStor) {
             meassageStor = await messageModule.create({ _id: eventId, messageStore: [] })
@@ -58,7 +51,7 @@ export const connection = (socket: Socket) => {
             message: message, name: userName,
         })
         const meassageStorSave = await meassageStor.save()
-        console.log(meassageStorSave.messageStore[0])
+        // console.log(meassageStorSave.messageStore[0])
         if (selfMessage) {
             selfMessage(meassageStorSave.messageStore[0])
         }
@@ -111,12 +104,8 @@ export const connection = (socket: Socket) => {
     })
     socket.on("disconnect",()=>{
         socket.disconnect(true)
-       const index = eventNotArr.findIndex((event)=>{
-            return event.socket.id == socket.id
-        })
-        console.log("eventNotArr length",eventNotArr.length)
-       eventNotArr.splice(index, 1)
-        // newEventNoti.off("new_event")
+        newEventNoti.off("new_event",newEvent)
+        console.log("listenerCount new_event off",newEventNoti.listenerCount("new_event"))
         console.log("disconnect")
     })
 } catch (error) {
