@@ -96,7 +96,7 @@ export const connection = (socket: Socket) => {
     })
     socket.on("disconnect",()=>{
         socket.disconnect(true)
-        newEventNoti.off("new_event",newEvent)
+        newEventNoti.removeAllListeners();
         console.log("disconnect")
     })
 } catch (error) {
