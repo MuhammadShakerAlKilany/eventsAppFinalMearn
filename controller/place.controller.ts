@@ -7,6 +7,7 @@ import placeModule from "../modules/DB/place.module";
 import path from "path";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { stor } from "../modules/firebasestorage";
+import AdminDao from "../dao/admin.dao";
 const placeDao = new PlaceDao();
 export const addPlace = tryCatchErr<Place>(async (req, res) => {
   const adminId = req["user"]._id;
@@ -114,8 +115,13 @@ export const placePhoto = tryCatchErr<never, { placeId: ObjectId }>(
 export const deletePlace = tryCatchErr<never, { _id: ObjectId }>(
   async (req, res) => {
     const placeId = req.params._id;
-    const place = await placeModule.findByIdAndDelete(placeId);
+    const userId = req["user"]._id;
+    const place = await placeModule.findById(placeId);
     if (!place) return res.status(404).json({ message: "not found place" });
+    const admin = await new AdminDao().getAdmin(userId);
+    if (!(admin || place.createdBy?.toString() === userId))
+      return res.status(403).json({ message: "You can not delete this place" });
+    await placeModule.findByIdAndDelete(placeId);
     return res.status(200).json({ message: "place deleted", data: place });
   }
 );
