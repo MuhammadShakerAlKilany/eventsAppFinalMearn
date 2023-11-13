@@ -37,7 +37,8 @@ export const connection = (socket: Socket) => {
         newEvent(event:any){
             
             console.log("new_event")
-            this.socket.broadcast.emit("new_event", event)
+            this.socket.emit("new_event", event)
+            console.log(this.socket)
         }
 
     })
@@ -113,7 +114,8 @@ export const connection = (socket: Socket) => {
        const index = eventNotArr.findIndex((event)=>{
             return event.socket.id == socket.id
         })
-        eventNotArr.splice(index, 1) 
+        console.log("eventNotArr length",eventNotArr.length)
+       eventNotArr.splice(index, 1)
         // newEventNoti.off("new_event")
         console.log("disconnect")
     })
