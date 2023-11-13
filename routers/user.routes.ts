@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { joiValidatorBody, joiValidatorParams } from "../middleware/joiValidator";
 import { idSchema, loginSchema, registerSchema, tokenSchema, userUpdateSchema, userUpdateWithAdminSchema } from "../joi/user.joi";
-import { login, register ,banUser ,varifyUser ,allUser,allUserBan, edite, editeUserWithAdmin, deleteUser, addUser, getUserProPicPath, changPlane, successPlane, closPlane} from "../controller/user.controller";
+import { login, register ,banUser ,varifyUser ,allUser,allUserBan, edite, editeUserWithAdmin, deleteUser, addUser, getUserProPicPath, changPlane, successPlane, closPlane, userData} from "../controller/user.controller";
 import { guardAdmin } from "../middleware/Guard/guardAdmin";
 import { upload } from "../middleware/multer/multer";
 import tryCatchErr from "../middleware/tryCatchErr";
@@ -18,7 +18,7 @@ router.post("/add_user",guard,guardAdmin,tryCatchErr(upload.single("proPic")),jo
 router.get("/ProPicPath/:_id",joiValidatorParams(idSchema),getUserProPicPath)
 router.get("/verifie/:token",joiValidatorParams(tokenSchema),varifyUser)
 router.patch("/ban/:_id",guard,guardAdmin,joiValidatorParams(idSchema),banUser)
-router.route("/").all(guard).patch(upload.single("proPic"),joiValidatorBody(userUpdateSchema),edite)
+router.route("/").all(guard).patch(upload.single("proPic"),joiValidatorBody(userUpdateSchema),edite).get(userData)
 router.get("/vip_plane/:_id",joiValidatorParams(idSchema),guard,changPlane)
 router.get("/vip_plane_success/:token",joiValidatorParams(tokenSchema),successPlane)
 router.get("/vip_plane_clos",joiValidatorParams(tokenSchema),closPlane)
