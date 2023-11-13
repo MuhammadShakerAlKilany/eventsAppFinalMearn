@@ -245,7 +245,7 @@ if(!user.isVIP){
     }
   });
 }else{
-  return res.status(301).redirect(`${process.env.CLINT_URL}`)
+  return res.status(400).json({message:"you are VIP"})
 }
 });
 export const successPlane = tryCatchErr<
