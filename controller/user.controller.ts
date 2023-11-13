@@ -188,8 +188,12 @@ export const getUserProPicPath = tryCatchErr<never, { _id: ObjectId }>(
     return res.sendFile(path.join(__dirname, "..", user.proPicPath));
   }
 );
-export const changPlane = tryCatchErr<never, { _id: ObjectId }>((req, res) => {
+export const changPlane = tryCatchErr<never, { _id: ObjectId }>(async (req, res) => {
   const _id = req.params._id;
+ const user = await userModule.findById(_id)
+ if(!user)return res.status(404).json({message:"not found user"})
+if(!user.isVIP){ 
+ 
   const token = jwt.sign({ _id }, process.env.SECRET_KEY!, {
     expiresIn: "1 days",
   });
@@ -240,6 +244,9 @@ export const changPlane = tryCatchErr<never, { _id: ObjectId }>((req, res) => {
       return res.json({ message: "link to paypal", data: { link } });
     }
   });
+}else{
+  return res.status(301).redirect(`${process.env.CLINT_URL}`)
+}
 });
 export const successPlane = tryCatchErr<
   never,
