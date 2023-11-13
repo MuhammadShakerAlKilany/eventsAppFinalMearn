@@ -7,6 +7,7 @@ import eventModule from "../modules/DB/event.module";
 import messageModule from "../modules/DB/meassage.module";
 import userModule from "../modules/DB/user.module";
 import { technicalSupportRoom } from "./technicalSupportRoom";
+const eventNotArr:any[]= []
 export const connection = (socket: Socket) => {
     try {
         const date = new Date()
@@ -27,11 +28,25 @@ export const connection = (socket: Socket) => {
             console.log(error)
         }
     })
-    const newEvent = (event:any) => {
-        console.log("new_event")
-        socket.broadcast.emit("new_event", event)
-    }
-    newEventNoti.on("new_event", newEvent)
+    // const newEvent = (event:any) => {
+    //     console.log("new_event")
+    //     socket.broadcast.emit("new_event", event)
+    // }
+    eventNotArr.push({
+        socket:socket,
+        newEvent(event:any){
+            
+            console.log("new_event")
+            this.socket.emit("new_event", event)
+            console.log(this.socket)
+        }
+
+    })
+    newEventNoti.on("new_event", (event:any)=>{
+        eventNotArr.forEach((newEvent)=>{
+            newEvent.newEvent(event)
+        })
+    })
     socket.on("send_message", async (eventId, message, selfMessage) => {
         const userName = (socket as any)["user"].userName
         console.log("eventId", eventId)
@@ -96,7 +111,12 @@ export const connection = (socket: Socket) => {
     })
     socket.on("disconnect",()=>{
         socket.disconnect(true)
-        newEventNoti.removeAllListeners();
+       const index = eventNotArr.findIndex((event)=>{
+            return event.socket.id == socket.id
+        })
+        console.log("eventNotArr length",eventNotArr.length)
+       eventNotArr.splice(index, 1)
+        // newEventNoti.off("new_event")
         console.log("disconnect")
     })
 } catch (error) {
