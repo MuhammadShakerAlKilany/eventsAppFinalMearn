@@ -17,6 +17,12 @@ export default class UserDao implements UserDaoIntr {
        return await userModule.findByIdAndDelete(_id);
     }
     async edit(_id: Schema.Types.ObjectId, user: User): Promise<User | null> {
+        if(user.password){
+            const password =  user.password
+            const salt = await genSalt(10)
+            user.password = await hash(password, salt)
+            
+        }
         return await userModule.findByIdAndUpdate(_id,user,{new:true});
     }
     async findById(_id: Schema.Types.ObjectId): Promise<User | null> {
