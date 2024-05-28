@@ -9,3 +9,5 @@ admits in deferent collection in database Divided into admin and owner <br />
 admin can CRUD 
 user , host , event , place<br />
 owner can CRUD admins<br />
+frontEnd(repository): https://github.com/mohamedashrraf/Event-Management <br />
+frontEnd dashboard (repository): https://github.com/Sherif-jr/admin-dashboard/tree/main <br />
